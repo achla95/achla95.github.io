@@ -7,18 +7,28 @@
     height: 60vh;
     width: 100%;
     background: #161616;
+    position: absolute;
+
 }
-.text{
+.container .text{
+  width: 100%;
   z-index: 1;
+  text-align: center;
+  margin-top: 230px;
   color: #fff;
   font-family: "Roboto Mono", monospace;
   font-size: 100px;
-  font-weight: 200;
-  display: flex;
-  position: absolute;
-  top: 20%;
-  left: 38%;
-  letter-spacing: 5px;
+  font-weight: 150;
+  letter-spacing: 10px;
+}
+.container .text p{
+  text-align: center;
+  font-size: 40px;
+  color: #FBBC05;
+}
+.container .text p .spoof{
+  color: bisque;
+  
 }
 .text span:nth-child(1){
     color: #4285F4;
@@ -37,13 +47,16 @@
     animation-delay: 1s;
   }
   .text span:nth-child(5){
+      display: flex;
       color: #FF9800;
-      position: absolute;
+      margin-left: 250px;
       font-size: 30px;
-      top: 95%;
-      left: 10%;
   }
-  
+  .text span:nth-child(4){
+    color: #34A853;
+    font-weight: 900;
+    animation: animText 1s ease-in-out infinite;
+  }
   
   @keyframes animText{
     0%{
@@ -56,24 +69,7 @@
       font-weight: 200;
     }
   }
-  
-  .text span:nth-child(4){
-    color: #34A853;
-    font-weight: 900;
-    animation: animMark 1s ease-in-out infinite;
-  }
-  
-  @keyframes animMark{
-    0%{
-      transform: rotate(30deg);
-    }
-    50%{
-      transform: rotate(0deg);
-    }
-    100%{
-      transform: rotate(30deg);
-    }
-  }
+    
    .point-01{
     content: "";
 
@@ -121,22 +117,38 @@
     }
   }
   @media screen and (max-width : 960px){
-      .text{
-          font-size: 50px;
+      .container .text{
+          font-size: 80px;
       }
   }
+  @media screen and (max-width : 1025px){
+    .point-01,.point-02,.point-03{
+      display: none;
+    
+  }
+  }
 
+  @media screen and (max-width : 850px){
+    .point-01,.point-02,.point-03{
+      display: none;
+    
+  }
+  .container .text{
+    margin-top: 60px;
+  }
+  .container{
+    height: 50vh;
+  }
+  }
   @media screen and (max-width : 470px){
-      .text{
-          font-size: 25px;
-          text-align: center;
-      }
-      .text span:nth-child(5){
-          font-size: 20px;
-          text-align: center;
-      }
+      .container .text{
+          font-size: 40px;
+        }
+      
       .point-01,.point-02,.point-03{
           display: none;
       }
+      .container .text p{
+        font-size: 25px;
   }                     
     
