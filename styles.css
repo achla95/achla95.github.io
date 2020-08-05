@@ -3,6 +3,140 @@
     margin: 0;
 }
 
-.container h1{
-    color: red;
+.container{
+    height: 60vh;
+    width: 100%;
+    background: #161616;
 }
+.text{
+  z-index: 1;
+  color: #fff;
+  font-family: "Roboto Mono", monospace;
+  font-size: 100px;
+  font-weight: 200;
+  display: flex;
+  position: absolute;
+  top: 20%;
+  left: 38%;
+  letter-spacing: 5px;
+}
+.text span:nth-child(1){
+    color: #4285F4;
+    animation: animText 0.9s ease-in-out infinite;
+  }
+  
+  .text span:nth-child(2){
+    color: #EA4335;
+    animation: animText 1s ease-in-out infinite;
+    animation-delay: 0.8s;
+  }
+  
+  .text span:nth-child(3){
+    color: #FBBC05;
+    animation: animText 1s ease-in-out infinite;
+    animation-delay: 1s;
+  }
+  .text span:nth-child(5){
+      color: #FF9800;
+      position: absolute;
+      font-size: 30px;
+      top: 95%;
+      left: 10%;
+  }
+  
+  
+  @keyframes animText{
+    0%{
+      font-weight: 200;
+    }
+    50%{
+      font-weight: 900;
+    }
+    100%{
+      font-weight: 200;
+    }
+  }
+  
+  .text span:nth-child(4){
+    color: #34A853;
+    font-weight: 900;
+    animation: animMark 1s ease-in-out infinite;
+  }
+  
+  @keyframes animMark{
+    0%{
+      transform: rotate(30deg);
+    }
+    50%{
+      transform: rotate(0deg);
+    }
+    100%{
+      transform: rotate(30deg);
+    }
+  }
+   .point-01{
+    content: "";
+
+    width: 8px;
+    height: 8px;
+    box-shadow: 100px 200px #FFEB3B, 200px 250px #FF9800, 200px 500px #00BCD4, 300px 300px #009688,
+                550px 150px #00BCD4, 550px 300px #2196F3, 350px 500px #FFF, 1750px 150px #00BCD4,
+                1000px 400px #673AB7, 650px 450px #03A9F4, 1200px 50px #FF5722, 1100px 450px #673AB7;
+    animation: starsUp 30s linear infinite;
+  }
+  
+  .point-02{
+    content: "";
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    box-shadow: 100px 200px #FFEB3B, 200px 250px #FF9800, 200px 500px #00BCD4, 300px 300px #009688,
+                550px 150px #00BCD4, 550px 300px #2196F3, 350px 500px #FFF, 1750px 150px #00BCD4,
+                1000px 400px #673AB7, 650px 450px #03A9F4, 1200px 50px #FF5722, 1100px 450px #673AB7;
+    animation: starsUp 40s linear infinite;
+  }
+  .point-03{
+    content: "";
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    box-shadow: 100px 200px #FFEB3B, 200px 250px #FF9800, 200px 500px #00BCD4, 300px 300px #009688,
+                550px 150px #00BCD4, 550px 300px #2196F3, 350px 500px #FFF, 1750px 150px #00BCD4,
+                1000px 400px #673AB7, 650px 450px #03A9F4, 1200px 50px #FF5722, 1100px 450px #673AB7;
+    animation: starsUp 50s linear infinite;
+  }
+
+  
+  
+  @keyframes starsUp{
+    0%{
+      transform: translateY(100px);
+      transform: translateX(1000px);
+    }
+    100%{
+      transform: translateY(-2000px);
+      transform: translateX(-1000px);
+
+      
+    }
+  }
+  @media screen and (max-width : 960px){
+      .text{
+          font-size: 50px;
+      }
+  }
+
+  @media screen and (max-width : 470px){
+      .text{
+          font-size: 25px;
+          text-align: center;
+      }
+      .text span:nth-child(5){
+          font-size: 20px;
+          text-align: center;
+      }
+      .point-01,.point-02,.point-03{
+          display: none;
+      }
+  }                     
+    
