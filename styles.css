@@ -12,19 +12,28 @@
 }
 .container .section-01 {
   position: absolute;
+  left: 70%;
 }
 .container .section-01 ul li{
   display: inline-block;
   padding: 15px;
+  transition: 0.5s;
+
 }
-.container .section-01 ul{
-  margin-left: 1250px;
-}
+
 .container .section-01 a{
-  color: red;
-  font-size: 25px;
+  color: #FBBC05;
+  font-family: "Roboto Mono", monospace;
+  font-size: 35px;
   text-decoration: none;
+  transition: 0.5s;
+  padding: 3px;
+
+  }
+.container .section-01 a:hover{
+  text-decoration: underline;
 }
+
 .container .text{
   width: 100%;
   z-index: 1;
@@ -135,11 +144,18 @@
       .container .text{
           font-size: 80px;
       }
+      
   }
   @media screen and (max-width : 1025px){
     .point-01,.point-02,.point-03{
       display: none;
     
+  }
+  .container .section-01 {
+    left: 50%;
+  }
+  .container .section-01 a{
+    font-size: 25px;
   }
   }
 
@@ -148,6 +164,12 @@
       display: none;
     
   }
+  .container .section-01 {
+    left: 40%;
+  }
+  .container .section-01 a{
+    font-size: 20px;
+  }
   .container .text{
     margin-top: 60px;
   }
@@ -155,15 +177,20 @@
     height: 50vh;
   }
   }
-  @media screen and (max-width : 470px){
+  @media screen and (max-width : 476px){
       .container .text{
           font-size: 40px;
         }
-      
+        .container .section-01 a{
+          font-size: 15px;
+        }
+        .container .section-01{
+          left: 10%;
+        }
       .point-01,.point-02,.point-03{
           display: none;
       }
       .container .text p{
         font-size: 25px;
   }                     
-    
+  }    
