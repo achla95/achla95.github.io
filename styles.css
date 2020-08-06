@@ -10,6 +10,21 @@
     position: absolute;
 
 }
+.container .section-01 {
+  position: absolute;
+}
+.container .section-01 ul li{
+  display: inline-block;
+  padding: 15px;
+}
+.container .section-01 ul{
+  margin-left: 1250px;
+}
+.container .section-01 a{
+  color: red;
+  font-size: 25px;
+  text-decoration: none;
+}
 .container .text{
   width: 100%;
   z-index: 1;
