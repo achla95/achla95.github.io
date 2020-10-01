@@ -4,37 +4,50 @@
 }
 
 .container{
-    height: 60vh;
+    height: 100%;
     width: 100%;
-    background: #161616;
     position: absolute;
-
-}
-.container .section-01 {
-  position: absolute;
-  left: 70%;
-}
-.container .section-01 ul li{
-  display: inline-block;
-  padding: 15px;
-  transition: 0.5s;
-
 }
 
-.container .section-01 a{
-  color: #FBBC05;
-  font-family: "Roboto Mono", monospace;
-  font-size: 35px;
+.head a{
   text-decoration: none;
-  transition: 0.5s;
-  padding: 3px;
+  color: #FBBC05;
+  display: inline-block;
 
-  }
-.container .section-01 a:hover{
-  text-decoration: underline;
 }
+.head a::after{
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px;
+    background: #FBBC05;
+    transition: width .3s;
+}
+.head a:hover::after{
+  width: 100%;
+}
+
+.head{
+  padding-top: 20px;
+  font-size: 30px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  background-color: #161616;
+  height: 8vh;
+}
+.head span{
+  padding: 10px;
+  font-family:  sans-serif;
+}
+
+
+
+
+
 
 .container .text{
+  background: #161616;
   width: 100%;
   z-index: 1;
   text-align: center;
@@ -94,52 +107,9 @@
     }
   }
     
-   .point-01{
-    content: "";
-
-    width: 8px;
-    height: 8px;
-    box-shadow: 100px 200px #FFEB3B, 200px 250px #FF9800, 200px 500px #00BCD4, 300px 300px #009688,
-                550px 150px #00BCD4, 550px 300px #2196F3, 350px 500px #FFF, 1750px 150px #00BCD4,
-                1000px 400px #673AB7, 650px 450px #03A9F4, 1200px 50px #FF5722, 1100px 450px #673AB7;
-    animation: starsUp 30s linear infinite;
-  }
+ 
   
-  .point-02{
-    content: "";
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    box-shadow: 100px 200px #FFEB3B, 200px 250px #FF9800, 200px 500px #00BCD4, 300px 300px #009688,
-                550px 150px #00BCD4, 550px 300px #2196F3, 350px 500px #FFF, 1750px 150px #00BCD4,
-                1000px 400px #673AB7, 650px 450px #03A9F4, 1200px 50px #FF5722, 1100px 450px #673AB7;
-    animation: starsUp 40s linear infinite;
-  }
-  .point-03{
-    content: "";
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    box-shadow: 100px 200px #FFEB3B, 200px 250px #FF9800, 200px 500px #00BCD4, 300px 300px #009688,
-                550px 150px #00BCD4, 550px 300px #2196F3, 350px 500px #FFF, 1750px 150px #00BCD4,
-                1000px 400px #673AB7, 650px 450px #03A9F4, 1200px 50px #FF5722, 1100px 450px #673AB7;
-    animation: starsUp 50s linear infinite;
-  }
-
-  
-  
-  @keyframes starsUp{
-    0%{
-      transform: translateY(100px);
-      transform: translateX(1000px);
-    }
-    100%{
-      transform: translateY(-2000px);
-      transform: translateX(-1000px);
-
-      
-    }
-  }
+ 
   @media screen and (max-width : 960px){
       .container .text{
           font-size: 80px;
