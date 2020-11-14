@@ -46,7 +46,26 @@
   font-family:  sans-serif;
 }
 
-
+.articles-section{
+  margin-top: 20px;
+  height: 50bh;
+}
+.articles-section h2{
+  font-weight: normal;
+  color: #007bff;
+  font-size: 25px;
+}
+.articles-section h2::after{
+  content: '';
+  display: block;
+  width: 0;
+  height: 2px;
+  background: #007bff;
+  transition: width .3s;
+}
+.articles-section h2:hover::after{
+width: 150px;
+}
 
 
   @media screen and (max-width : 476px){
