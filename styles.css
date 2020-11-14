@@ -11,7 +11,7 @@
 
 .head a{
   text-decoration: none;
-  color: #FBBC05;
+  color: #232b2b;
   display: inline-block;
 
 }
@@ -20,7 +20,7 @@
     display: block;
     width: 0;
     height: 2px;
-    background: #FBBC05;
+    background: #232b2b;
     transition: width .3s;
 }
 .head a:hover::after{
@@ -29,13 +29,18 @@
 
 .head{
   padding-top: 20px;
-  font-size: 30px;
-  text-align: center;
+  font-size: 25px;
   align-items: center;
   justify-content: center;
   background-color: #707070;
   height: 8vh;
 }
+.head .thm{
+  display: inline;
+  float: right;
+  margin: 0;
+}
+
 .head span{
   padding: 10px;
   font-family:  sans-serif;
@@ -44,109 +49,6 @@
 
 
 
-
-
-.container .text{
-  background: #161616;
-  width: 100%;
-  z-index: 1;
-  text-align: center;
-  margin-top: 230px;
-  color: #fff;
-  font-family: "Roboto Mono", monospace;
-  font-size: 100px;
-  font-weight: 150;
-  letter-spacing: 10px;
-}
-.container .text p{
-  text-align: center;
-  font-size: 40px;
-  color: #FBBC05;
-}
-.container .text p .spoof{
-  color: bisque;
-  
-}
-.text span:nth-child(1){
-    color: #4285F4;
-    animation: animText 0.9s ease-in-out infinite;
-  }
-  
-  .text span:nth-child(2){
-    color: #EA4335;
-    animation: animText 1s ease-in-out infinite;
-    animation-delay: 0.8s;
-  }
-  
-  .text span:nth-child(3){
-    color: #FBBC05;
-    animation: animText 1s ease-in-out infinite;
-    animation-delay: 1s;
-  }
-  .text span:nth-child(5){
-      display: flex;
-      color: #FF9800;
-      margin-left: 250px;
-      font-size: 30px;
-  }
-  .text span:nth-child(4){
-    color: #34A853;
-    font-weight: 900;
-    animation: animText 1s ease-in-out infinite;
-  }
-  
-  @keyframes animText{
-    0%{
-      font-weight: 200;
-    }
-    50%{
-      font-weight: 900;
-    }
-    100%{
-      font-weight: 200;
-    }
-  }
-    
- 
-  
- 
-  @media screen and (max-width : 960px){
-      .container .text{
-          font-size: 80px;
-      }
-      
-  }
-  @media screen and (max-width : 1025px){
-    .point-01,.point-02,.point-03{
-      display: none;
-    
-  }
-  .container .section-01 {
-    left: 50%;
-  }
-  .container .section-01 a{
-    font-size: 25px;
-  }
-  }
-
-  @media screen and (max-width : 850px){
-    .point-01,.point-02,.point-03{
-      display: none;
-    
-  }
-  .container .section-01 {
-    left: 40%;
-  }
-  .container .section-01 a{
-    font-size: 20px;
-  }
-  .container .text{
-    margin-top: 60px;
-  }
-  .container{
-    height: 50vh;
-  }
-  }
   @media screen and (max-width : 476px){
       .container .text{
           font-size: 40px;
