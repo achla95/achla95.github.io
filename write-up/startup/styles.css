@@ -53,23 +53,24 @@
     text-align: center;
     font-size: 35px;
     margin-top: 30px;
-    color:  #FF4136;
+    text-decoration: none;
+    color:   rgb(21 27 39 / 40%) ;
+    border-bottom:   rgb(21 27 39 / 40%)  0.125em solid;
+    
 }
 .container img.displayed{
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 5%;
+    width: 70%;
     margin-top: 10px;
 }
-.container h1::after{
-    content: '';
-    display: block;
-    width: 0;
-    height: 2px;
-    background: #FF4136;
-    transition: width .3s;
+.article h2{
+  font-weight: normal;
+  font-size: 35px;
+  color: #007bff;
 }
-.container h1:hover::after{
-  width: 320px;
+.article p{
+  font-size: 25px;
+  color: rgb(21 27 39 / 40%) ;
 }
