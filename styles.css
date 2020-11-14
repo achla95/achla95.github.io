@@ -1,6 +1,7 @@
 *{
     padding: 0;
     margin: 0;
+    text-decoration: none;
 }
 
 .container{
@@ -32,7 +33,7 @@
   font-size: 25px;
   align-items: center;
   justify-content: center;
-  background-color: #707070;
+  background: rgb(21 27 39 / 40%);
   height: 8vh;
 }
 .head .thm{
@@ -53,7 +54,7 @@
 .articles-section h2{
   font-weight: normal;
   color: #007bff;
-  font-size: 25px;
+  font-size: 35px;
 }
 .articles-section h2::after{
   content: '';
@@ -64,7 +65,28 @@
   transition: width .3s;
 }
 .articles-section h2:hover::after{
-width: 150px;
+width: 200px;
+}
+.articles-section .first{
+  border: #007bff solid 2px;
+  border-radius: 5px;
+  padding: 15px;
+  list-style: none;
+  margin-top: 50px;
+  margin-left: 150px;
+  width: 300px;
+}
+.first{
+  background: rgb(21 27 39 / 25%);;
+}
+ .first a{
+  color: #007bff;
+  font-size: 25px;
+}
+.first li{
+  padding: 10px;
+  color: #707070;
+  font-size: 20px;
 }
 
 
