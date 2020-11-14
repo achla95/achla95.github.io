@@ -65,7 +65,7 @@
   transition: width .3s;
 }
 .articles-section h2:hover::after{
-width: 200px;
+width: 230px;
 }
 .articles-section .first{
   border: #007bff solid 2px;
