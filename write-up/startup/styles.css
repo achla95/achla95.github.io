@@ -54,8 +54,11 @@
     font-size: 35px;
     margin-top: 30px;
     text-decoration: none;
-    color:   rgb(21 27 39 / 40%) ;
-    border-bottom:   rgb(21 27 39 / 40%)  0.125em solid;
+    color: #007bff ;
+    border-bottom:   #007bff  0.125em solid;
+    border-top:   #007bff  0.125em solid;
+    border-left:   #007bff  0.125em solid;
+    border-right:  #007bff  0.125em solid;
     
 }
 .container img.displayed{
@@ -66,11 +69,26 @@
     margin-top: 10px;
 }
 .article h2{
+  display: inline-block;
   font-weight: normal;
   font-size: 35px;
   color: #007bff;
 }
+
 .article p{
+  text-align: center;
+  font-family: 'Lora', serif;  
   font-size: 25px;
   color: rgb(21 27 39 / 40%) ;
+}
+.container .article .surl::after{
+  content: '';
+  display: block;
+  width: 0;
+  height: 2px;
+  background: #007bff;
+  transition: width .3s;
+}
+.container .article .surl:hover::after{
+width: 100%;
 }
