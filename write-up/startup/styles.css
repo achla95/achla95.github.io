@@ -2,17 +2,19 @@
     padding: 0;
     margin: 0;
     text-decoration: none;
+    background: #111;
 }
 
 .container{
     height: 100%;
     width: 100%;
     position: absolute;
+    
 }
 
 .head a{
   text-decoration: none;
-  color: #232b2b;
+  color: #ccbeaf;
   display: inline-block;
   font-family: 'Roboto', sans-serif;
 
@@ -22,7 +24,7 @@
     display: block;
     width: 0;
     height: 2px;
-    background: #232b2b;
+    background: #ccbeaf;
     transition: width .3s;
 }
 .head a:hover::after{
@@ -34,7 +36,6 @@
   font-size: 25px;
   align-items: center;
   justify-content: center;
-  background: rgb(21 27 39 / 40%);
   height: 8vh;
 }
 .head .thm{
@@ -47,18 +48,27 @@
   padding: 10px;
   font-family:  sans-serif;
 }
-
-.container h1{
-    margin: 0 auto;
-    width: 35%;
-    text-align: center;
-    font-family: 'Open Sans', sans-serif;
-    font-size: 35px;
-    margin-top: 30px;
-    text-decoration: none;
-    color: rgb(21 27 39 / 40%) ;
-    border-bottom:   rgb(21 27 39 / 40%)  0.125em solid;
-    
+.parent{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.child{
+  display: inline-block;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 35px;
+  color: #fb9904 ;
+}
+.parent .child::after{
+  content: '';
+  display: block;
+  width: 0;
+  height: 2px;
+  background: #fb9904;
+  transition: width .3s;
+}
+.parent .child:hover::after{
+width: 100%;
 }
 .container img.displayed{
     display: block;
@@ -67,29 +77,74 @@
     width: 60%;
     margin-top: 10px;
 }
+img.displayed1{
+  width: 35%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+img.displayed2{
+  width: 40%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+img.displayed3{
+  width: 35%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+img.displayed4{
+  width: 30%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+img.displayed5{
+  width: 35%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
 .article h2{
   display: inline-block;
   font-weight: normal;
   font-size: 35px;
-  color:  #232b2b;
+  color:  #ccbeaf;
   font-family: 'Open Sans', sans-serif;
 }
 
 .article p{
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
   text-align: center;
   font-family: 'Lora', serif;  
   font-size: 25px;
-  color: #111111;
+  width: 45%;
+  color: #ccbeaf;
 }
-.container .article .surl::after{
+ .surl::after{
   content: '';
   display: block;
   width: 0;
   height: 5px;
-  background:  #232b2b;
+  background:  #ccbeaf;
   transition: width .3s;
 }
-.container .article .surl:hover::after{
+ .surl:hover::after{
 width: 100%;
+}
+.parents{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.surl{
+  display: inline-block;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 35px;
+  color: #fb9904 ;
 }
 
