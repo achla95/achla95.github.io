@@ -46,7 +46,9 @@
   padding: 10px;
   font-family:  sans-serif;
 }
-
+.container{
+  background: rgb(21 27 39 / 70%);;
+}
 .container h1{
     margin: 0 auto;
     width: 35%;
