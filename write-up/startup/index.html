@@ -44,6 +44,8 @@
                 mener à l'exploitation...
             </p>
             <br>
+            <br>
+            <br>
             <h2 class="surl">Exploit</h2>
             <br>
             <p>Maintenant que nous avons upload notre reverse-shell avant de l'éxécuter on set un listener avec netcat en tapant la commande suivante :
@@ -51,6 +53,8 @@
                 succès notre shell en tant que www-data. Il nous reste plus qu'a trouver un moyen d'augmenter ses privilèges...
             </p>
             <img class="displayed" src="../../img/nc.PNG" alt="cat_where?">
+            <br>
+            <br>
             <br>
             <h2 class="surl">Privesc</h2>
             <br>
@@ -73,7 +77,9 @@
                machine victime dans un fichier nommé passwd sur notre machine. Une fois cela fait on génére un 
                salt password avec la commande suivant <span style="color: #007bff; background: rgb(21 27 39 / 10%) ;">openssl passwd -1 -salt abc 123</span>               
             </p>
+            <br>
             <img  class="displayed "src="../../img/salt.PNG" alt="bzzzzt">
+            <br>
             <p>Puis on copie le salt dans notre fichier passwd que l'on a crée à la place du <span style="color: #007bff;">X</span> juste à coté du USER
                Maintenant on modifie le fichier print.sh en y metttant chmod u+s /bin/cp à la place de echo 'Done'.
                Une fois cela fait on attend 1 à 2 minutes et pendant ce temps on met un petit serveur http en place avec python :
@@ -82,6 +88,7 @@
                connecter en tant que vagrant avec le password 123 et de cat le flag root.txt
             </p>
             <img  class="displayed "src="../../img/root.jpg" alt="rrrrrrrr">
+            <br>
             <p>Et voilà j'ai pu root cette machine assez facilement néanmoins elle était vraiment sympa
                Merci d'avoir jeter un coup à ma première Write-up et à très bientôt !!!
             </p>
