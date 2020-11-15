@@ -69,17 +69,18 @@
     margin-top: 10px;
 }
 .article h2{
-  display: inline-block;
+  
   font-weight: normal;
   font-size: 35px;
   color: #007bff;
+  text-align: center;
 }
 
 .article p{
   text-align: center;
   font-family: 'Lora', serif;  
   font-size: 25px;
-  color: rgb(21 27 39 / 40%) ;
+  color: #FFFFFF  ;
 }
 .container .article .surl::after{
   content: '';
@@ -91,4 +92,7 @@
 }
 .container .article .surl:hover::after{
 width: 100%;
+}
+.article{
+  background:  #111111;
 }
