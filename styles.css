@@ -2,17 +2,17 @@
     padding: 0;
     margin: 0;
     text-decoration: none;
+    background: #111;
 }
 
 .container{
     height: 100%;
     width: 100%;
-    position: absolute;
 }
 
 .head a{
   text-decoration: none;
-  color: #232b2b;
+  color: #ccbeaf;
   display: inline-block;
 
 }
@@ -21,7 +21,7 @@
     display: block;
     width: 0;
     height: 2px;
-    background: #232b2b;
+    background: #ccbeaf;
     transition: width .3s;
 }
 .head a:hover::after{
@@ -33,77 +33,70 @@
   font-size: 25px;
   align-items: center;
   justify-content: center;
-  background: rgb(21 27 39 / 40%);
   height: 8vh;
 }
-.head .thm{
-  display: inline;
-  float: right;
-  margin: 0;
-}
+
 
 .head span{
   padding: 10px;
   font-family:  sans-serif;
 }
 
-.articles-section{
-  margin-top: 20px;
-  height: 50bh;
+.parents{
+  height: 60vh;
+  margin-top: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
-.articles-section h2{
-  font-weight: normal;
-  color: #007bff;
-  font-size: 35px;
+.parents h2{
+  font-family: 'Open Sans', sans-serif;
+  color: #fb9904;
+  font-size: 45px;
 }
-.articles-section h2::after{
+
+.parents h2::after{
   content: '';
   display: block;
   width: 0;
   height: 2px;
-  background: #007bff;
+  background: #fb9904;
   transition: width .3s;
 }
-.articles-section h2:hover::after{
-width: 230px;
+.parents h2:hover::after{
+width: 100%;
 }
-.articles-section .first{
-  border: #007bff solid 2px;
-  border-radius: 5px;
-  padding: 15px;
-  list-style: none;
-  margin-top: 50px;
-  margin-left: 150px;
-  width: 300px;
-}
-.first{
-  background: rgb(21 27 39 / 25%);;
-}
- .first a{
-  color: #007bff;
-  font-size: 25px;
-}
-.first li{
-  padding: 10px;
-  color: #707070;
+
+.childs{
+  margin-top: 20px;
+  border: #fb9904 solid 3px;
+  display: inline-block;
+  font-family: 'Open Sans', sans-serif;
   font-size: 20px;
+  padding: 25px;
+}
+.childs h3{
+  text-align: center;
+  font-size: 35px;
+  color: #ccbeaf;
+}
+.childs p{
+  color: #ccbeaf;
+  font-size: 25px;
+  margin-top: 50px;
 }
 
 
-  @media screen and (max-width : 476px){
-      .container .text{
-          font-size: 40px;
-        }
-        .container .section-01 a{
-          font-size: 15px;
-        }
-        .container .section-01{
-          left: 10%;
-        }
-      .point-01,.point-02,.point-03{
-          display: none;
-      }
-      .container .text p{
-        font-size: 25px;
-  }                     
+
+
+  @media screen and (max-width : 510px){
+    .head{
+      margin: 25px;
+      text-decoration: none;
+      color: #ccbeaf;
+      display: flex;
+      flex-direction: column;
+    } 
+    
   }    
