@@ -147,4 +147,13 @@ width: 100%;
   font-size: 35px;
   color: #fb9904 ;
 }
-
+@media screen and (max-width : 510px){
+  .head{
+    margin: 25px;
+    text-decoration: none;
+    color: #ccbeaf;
+    display: flex;
+    flex-direction: column;
+  } 
+  
+}    
