@@ -9,6 +9,17 @@
     height: 100%;
     width: 100%;
 }
+.head .my-pic img{
+  float: right;
+  height: 120px;
+  border-radius: 30px;
+  margin-top: -40px;
+  margin-right: 20px;
+  transition: transform 1s;
+}
+.head .my-pic img:hover{
+  transform: rotate(10deg); 
+}
 
 .head a{
   text-decoration: none;
@@ -30,7 +41,7 @@
 
 .head{
   padding-top: 20px;
-  font-size: 25px;
+  font-size: 35px;
   align-items: center;
   justify-content: center;
   height: 8vh;
@@ -44,7 +55,7 @@
 
 .parents{
   height: 60vh;
-  margin-top: 100px;
+  margin-top: 30px;
   display: flex;
   flex-direction: column;
   justify-content: center;
