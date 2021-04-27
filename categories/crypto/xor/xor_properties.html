@@ -52,7 +52,7 @@
 KEY2 ^ KEY3 = "c1545756687e7573db23aa1c3452a098b71a7fbf0fddddde5fc1"
 FLAG ^ KEY1 ^ KEY3 ^ KEY2 = "04ee9855208a2cd59091d04767ae47963170d1660df7f56f5faf"</pre></code>
             </div>
-            <p>Maintenant grâce au propriétés du xor on peut facilementn retrouver key2 et key3 sur qui nous permettra</p>
+            <p>Maintenant grâce au propriétés du xor on peut facilementn retrouver la clé 1 et la clé 2 sur qui nous permettra</p>
             <p>d'obtenir le flag. J'ai donc fait un petit script python et le tour est joué. </p>
       </div>
       <div class="code">
@@ -86,7 +86,10 @@ FLAG ^ KEY1 ^ KEY3 ^ KEY2 = "04ee9855208a2cd59091d04767ae47963170d1660df7f56f5fa
                             print(f"flag : {flag}")
                             print(bytearray.fromhex(flag).decode()) #on decode le flag qui est en hexadecimal et le tour est joué</code></pre>
             </div>
-            <p>Et voîla</p>
+            <p>And Voilà, c'était un petit challenge sympathique, j'étais déjà informé sur le xor mais pas à propos de ses propriétés </p>
+            <p>ce qui était très intéressant. En espérant que vous ayez passé une bonne lecture.</p>
+            <br>
+            <br>
     </body>
     <script>hljs.initHighlightingOnLoad();</script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
