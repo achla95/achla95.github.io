@@ -3,6 +3,9 @@
    <head>
       <meta charset="utf-8">
       <link rel="stylesheet" href="styles.css">
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css">
+      <link rel="stylesheet" href="../../../styles/default.css">
+      <script src="../../../highlight.pack.js"></script>
       <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
       <script src="https://kit.fontawesome.com/a076d05399.js"></script>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -41,6 +44,50 @@
       </nav>
       <div class="container">
             <h1>CryptoHack : XOR Properties</h1>
+            <p>On se retrouve pour mon premier write-up d'un challenge assez facile venant de <span>CryptoHack</span>.</p>
+            <p>Le but était bienvidemment de retrouver le flag, on disposait des informations suivantes : </p>
+            <div class="info">
+                 <pre> <code class="py">KEY1 = "a6c8b6733c9b22de7bc0253266a3867df55acde8635e19c73313"
+                    KEY2 ^ KEY1 = "37dcb292030faa90d07eec17e3b1c6d8daf94c35d4c9191a5e1e"
+KEY2 ^ KEY3 = "c1545756687e7573db23aa1c3452a098b71a7fbf0fddddde5fc1"
+FLAG ^ KEY1 ^ KEY3 ^ KEY2 = "04ee9855208a2cd59091d04767ae47963170d1660df7f56f5faf"</pre></code>
+            </div>
+            <p>Maintenant grâce au propriétés du xor on peut facilementn retrouver key2 et key3 sur qui nous permettra</p>
+            <p>d'obtenir le flag. J'ai donc fait un petit script python et le tour est joué. </p>
       </div>
+      <div class="code">
+      <pre><code class="py">
+        from pwn import xor
+        import sys
+                        
+                        def xor_two_str(s1,s2):
+                            if len(s1) != len(s2):
+                                raise "XOR EXCEPTION: pas la même taille!"
+                        
+                            return ''.join(format(int(a, 16) ^ int(b, 16), 'x') for a,b in zip(s1,s2))
+                        
+                        key1 = "a6c8b6733c9b22de7bc0253266a3867df55acde8635e19c73313"
+                        xor_between_key1_key2 = "37dcb292030faa90d07eec17e3b1c6d8daf94c35d4c9191a5e1e"
+                        xor_between_key2_key3 = "c1545756687e7573db23aa1c3452a098b71a7fbf0fddddde5fc1"
+                        xor_between_flag_key1__key3_key2 = "04ee9855208a2cd59091d04767ae47963170d1660df7f56f5faf"
+                        
+                        
+                        
+                        key2 = xor_two_str(key1, xor_between_key1_key2) #obtention de la key2 en utilisant les propriétés du xor.
+                        key3 = xor_two_str(key2, xor_between_key2_key3) #obtention de la key3 en utilisant les propriétés du xor.
+                        
+                        flag = xor_two_str(xor_two_str(xor_two_str(key1,key2),key3), xor_between_flag_key1__key3_key2)#obtention du flag en utilisant les propriétés du xor.
+                        
+                        
+                        if "__main__" == __name__:
+                            print(f"key1 : {key1}")
+                            print(f"key2 : {key2}")
+                            print(f"key3 : {key3}")
+                            print(f"flag : {flag}")
+                            print(bytearray.fromhex(flag).decode()) #on decode le flag qui est en hexadecimal et le tour est joué</code></pre>
+            </div>
+            <p>Et voîla</p>
     </body>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
 </html>
