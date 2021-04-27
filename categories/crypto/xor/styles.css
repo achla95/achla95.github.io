@@ -174,8 +174,13 @@ p{
   color:#1b1b1b;
   font-size: 30px;
   font-weight: 400;
+  text-align: center;
 }
 .code{
     margin: 0 auto;
     width: 60%; 
+}
+
+.info{
+    align-items: center;
 }
