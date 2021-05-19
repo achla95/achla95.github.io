@@ -9,7 +9,7 @@
       <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
       <script src="https://kit.fontawesome.com/a076d05399.js"></script>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Xor Properties</title>
+      <title>RSA Factorisation</title>
    </head>
    <body>
       <nav>
@@ -43,14 +43,16 @@
          </ul>
       </nav>
       <div class="container">
-            <h1>CryptoHack : XOR Properties</h1>
-            <p>On se retrouve pour mon premier write-up d'un challenge assez facile venant de <span>CryptoHack</span>.</p>
-            <p>Le but était bienvidemment de retrouver le flag, on disposait des informations suivantes : </p>
+            <h1>Root-Me : RSA Factorisation</h1>
+            <p>On se retrouve pour un write-up venant de <span>Root-Me</span> cette fois çi.</p>
+            <p>Le but était de retrouver le flag, on disposait des informations suivantes : </p>
             <div class="info">
-                 <pre> <code class="py">KEY1 = "a6c8b6733c9b22de7bc0253266a3867df55acde8635e19c73313"
-                    KEY2 ^ KEY1 = "37dcb292030faa90d07eec17e3b1c6d8daf94c35d4c9191a5e1e"
-KEY2 ^ KEY3 = "c1545756687e7573db23aa1c3452a098b71a7fbf0fddddde5fc1"
-FLAG ^ KEY1 ^ KEY3 ^ KEY2 = "04ee9855208a2cd59091d04767ae47963170d1660df7f56f5faf"</pre></code>
+    <pre><code class="py">cyphertext = "e8oQDihsmkvjT3sZe+EE8lwNvBEsFegYF6+OOFOiR6gMtMZxxba/bIgLUD8pV3yEf0gOOfHuB5bC3vQmo7bE4PcIKfpFGZBA"
+publickey.pem = "-----BEGIN PUBLIC KEY-----
+                MGQwDQYJKoZIhvcNAQEBBQADUwAwUAJJAMLLsk/b+SO2Emjj8Ro4lt5FdLO6WHMM
+                vWUpOIZOIiPu63BKF8/QjRa0aJGmFHR1mTnG5Jqv5/JZVUjHTB1/uNJM0VyyO0zQ
+                owIDAQAB
+                -----END PUBLIC KEY-----"</pre></code>
             </div>
             <br>
             <br>
@@ -61,34 +63,27 @@ FLAG ^ KEY1 ^ KEY3 ^ KEY2 = "04ee9855208a2cd59091d04767ae47963170d1660df7f56f5fa
       </div>
       <div class="code">
       <pre><code class="py">
-        from pwn import xor
-        import sys
-                        
-                        def xor_two_str(s1,s2):
-                            if len(s1) != len(s2):
-                                raise "XOR EXCEPTION: pas la même taille!"
-                        
-                            return ''.join(format(int(a, 16) ^ int(b, 16), 'x') for a,b in zip(s1,s2))
-                        
-                        key1 = "a6c8b6733c9b22de7bc0253266a3867df55acde8635e19c73313"
-                        xor_between_key1_key2 = "37dcb292030faa90d07eec17e3b1c6d8daf94c35d4c9191a5e1e"
-                        xor_between_key2_key3 = "c1545756687e7573db23aa1c3452a098b71a7fbf0fddddde5fc1"
-                        xor_between_flag_key1__key3_key2 = "04ee9855208a2cd59091d04767ae47963170d1660df7f56f5faf"
-                        
-                        
-                        
-                        key2 = xor_two_str(key1, xor_between_key1_key2) #obtention de la key2 en utilisant les propriétés du xor.
-                        key3 = xor_two_str(key2, xor_between_key2_key3) #obtention de la key3 en utilisant les propriétés du xor.
-                        
-                        flag = xor_two_str(xor_two_str(xor_two_str(key1,key2),key3), xor_between_flag_key1__key3_key2)#obtention du flag en utilisant les propriétés du xor.
-                        
-                        
-                        if "__main__" == __name__:
-                            print(f"key1 : {key1}")
-                            print(f"key2 : {key2}")
-                            print(f"key3 : {key3}")
-                            print(f"flag : {flag}")
-                            print(bytearray.fromhex(flag).decode()) #on decode le flag qui est en hexadecimal et le tour est joué</code></pre>
+        from binascii import hexlify,unhexlify
+        import base64
+        import rsa
+        
+        msg = base64.b64decode("e8oQDihsmkvjT3sZe+EE8lwNvBEsFegYF6+OOFOiR6gMtMZxxba/bIgLUD8pV3yEf0gOOfHuB5bC3vQmo7bE4PcIKfpFGZBA")
+        msg_decoded = int(hexlify(msg),16)
+        
+        
+        
+        e = 65537
+        
+        n = 188198812920607963838697239461650439807163563379417382700763356422988859715234665485319060606504743045317388011303396716199692321205734031879550656996221305168759307650257059
+        p = 398075086424064937397125500550386491199064362342526708406385189575946388957261768583317
+        q = 472772146107435302536223071973048224632914695302097116459852171130520711256363590397527
+        phi_n = (p-1)*(q-1)
+        
+        d = pow(e,-1,phi_n)
+        solve = rsa.PrivateKey(n,e,d,p,q)
+        
+        plaintext = rsa.decrypt(msg,solve)
+        print(plaintext)</code></pre>
             </div>
             <br>
             <br>
