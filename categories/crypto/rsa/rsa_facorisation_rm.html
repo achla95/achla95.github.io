@@ -57,9 +57,8 @@ publickey.pem = "-----BEGIN PUBLIC KEY-----
             <br>
             <br>
             <p>En partant du principe que vous connaissez les bases concernant le chiffrement rsa, il me fallait : N,e,phi(n) et d</p>
-            <p>afin de retoruver le message en clair</p>
-            openssl rsa -pubin -in pubkey.pem -text -noout -modulus   
-            <p>d'obtenir le flag. J'ai donc fait un petit script python et le tour est joué. </p>
+            <p>afin de retoruver le message en clair. Pour obtenir n on utilise openssl avec la commande : <span style="background: #F7EEA6;;">openssl rsa -pubin -in pubkey.pem -text -noout -modulus  </span> </p> 
+            <p>Maintenant il nous faut en déduire p et q pour cela j'ai utilisé <span>Factordb</span>.</p>
             <br>
             <br>
       </div>
