@@ -44,7 +44,7 @@
       </nav>
       <div class="container">
             <h1>Root-Me : RSA Factorisation</h1>
-            <p>On se retrouve pour un write-up venant de <span>Root-Me</span> cette fois çi.</p>
+            <p>On se retrouve pour un write-up venant de <span><a href="https://www.root-me.org/" target="_blank" style="text-decoration: none; color: #fb9904;">Root-Me</a></span> cette fois çi.</p>
             <p>Le but était de retrouver le flag, on disposait des informations suivantes : </p>
             <div class="info">
     <pre><code class="py">cyphertext = "e8oQDihsmkvjT3sZe+EE8lwNvBEsFegYF6+OOFOiR6gMtMZxxba/bIgLUD8pV3yEf0gOOfHuB5bC3vQmo7bE4PcIKfpFGZBA"
@@ -57,30 +57,33 @@ publickey.pem = "-----BEGIN PUBLIC KEY-----
             <br>
             <br>
             <p>En partant du principe que vous connaissez les bases concernant le chiffrement rsa, il me fallait : N,e,phi(n) et d</p>
-            <p>afin de retoruver le message en clair. Pour obtenir n on utilise openssl avec la commande : <span style="background: #F7EEA6;;">openssl rsa -pubin -in pubkey.pem -text -noout -modulus  </span> </p> 
-            <p>Maintenant il nous faut en déduire p et q pour cela j'ai utilisé <span>Factordb</span>.</p>
+            <p>afin de retoruver le message en clair. Pour obtenir n on utilise openssl avec la commande : </p>
+            <p><span style="color: #fb9904;">openssl rsa -pubin -in pubkey.pem -text -noout -modulus  </span> </p>
+            <p>Maintenant il faut trouver les deux facteurs premiers p et q pour cela j'ai utilisé <span><a href="http://factordb.com/" target="_blank" style="text-decoration: none; color: #fb9904;">Factordb</a></span>.</p>
+            <p>En moins d'une seconde il nous trouve les deux facteurs premiers p et q, on peut ainsi calculer phi(n) puis d.</p>
+            <p>Enfin j'ai un fait un petit script python afin de déchiffrer le message et le tour est joué.</p>
             <br>
             <br>
       </div>
       <div class="code">
       <pre><code class="py">
-        from binascii import hexlify,unhexlify
-        import base64
-        import rsa
+        from binascii import hexlify,unhexlify #convertir en hexadécimal ou l'inverse !
+        import base64 # pour decoder le message qui est en base64
+        import rsa #afin de déchiffrer le message
         
         msg = base64.b64decode("e8oQDihsmkvjT3sZe+EE8lwNvBEsFegYF6+OOFOiR6gMtMZxxba/bIgLUD8pV3yEf0gOOfHuB5bC3vQmo7bE4PcIKfpFGZBA")
-        msg_decoded = int(hexlify(msg),16)
+        msg_decoded = int(hexlify(msg),16) #decodage du message en base64
         
         
         
-        e = 65537
+        e = 65537 #exposant de chiffrement
         
         n = 188198812920607963838697239461650439807163563379417382700763356422988859715234665485319060606504743045317388011303396716199692321205734031879550656996221305168759307650257059
         p = 398075086424064937397125500550386491199064362342526708406385189575946388957261768583317
         q = 472772146107435302536223071973048224632914695302097116459852171130520711256363590397527
-        phi_n = (p-1)*(q-1)
+        phi_n = (p-1)*(q-1) # indicatrice d'Euler
         
-        d = pow(e,-1,phi_n)
+        d = pow(e,-1,phi_n) #clé privée
         solve = rsa.PrivateKey(n,e,d,p,q)
         
         plaintext = rsa.decrypt(msg,solve)
@@ -88,7 +91,7 @@ publickey.pem = "-----BEGIN PUBLIC KEY-----
             </div>
             <br>
             <br>
-            <p>And Voilà, c'était un petit challenge sympathique, j'étais déjà informé sur le xor mais pas à propos de ses propriétés </p>
+            <p>And Voilà, c'était un challenge de niveau moyen pour moi j'ai notamement eu du mal à factoriser n car je ne connaissais pas Factordb, mais une fois p et q obtenu la résolution du challenge n'était pas compliqué.</p>
             <p>ce qui était très intéressant.</p>
             <br>
             <br>
