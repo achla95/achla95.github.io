@@ -44,8 +44,14 @@
       </nav>
       <div class="container">
             <h1>Root-Me : RSA Factorisation</h1>
-            <p>On se retrouve pour un write-up venant de <span><a href="https://www.root-me.org/" target="_blank" style="text-decoration: none; color: #fb9904;">Root-Me</a></span> cette fois çi.</p>
-            <p>Le but était de retrouver le flag, on disposait des informations suivantes : </p>
+            <br>
+            <span> <i class="far fa-calendar" style="color: #fb9904;"></i> June 8, 201</span>
+            <br>
+            <span><i class="far fa-clock" style="color: #fb9904;"></i> 2 min read</span>
+            <br>
+            <span style="color:  #FF851B;"><i class="fas fa-circle" style="color:   #FF851B  ;"></i> Medium</span>
+            <p>On se retrouve pour un write-up venant de <span><a href="https://www.root-me.org/" target="_blank" style="text-decoration: none; color: #fb9904;">Root-Me</a></span> cette fois çi.
+            Le but était de retrouver le flag, on disposait des informations suivantes : </p>
             <div class="info">
     <pre><code class="py">cyphertext = "e8oQDihsmkvjT3sZe+EE8lwNvBEsFegYF6+OOFOiR6gMtMZxxba/bIgLUD8pV3yEf0gOOfHuB5bC3vQmo7bE4PcIKfpFGZBA"
 publickey.pem = "-----BEGIN PUBLIC KEY-----
@@ -56,15 +62,21 @@ publickey.pem = "-----BEGIN PUBLIC KEY-----
             </div>
             <br>
             <br>
-            <p>En partant du principe que vous connaissez les bases concernant le chiffrement rsa, il me fallait : N,e,phi(n) et d</p>
-            <p>afin de retoruver le message en clair. Pour obtenir n on utilise openssl avec la commande : </p>
-            <p><span style="color: #fb9904;">openssl rsa -pubin -in pubkey.pem -text -noout -modulus  </span> </p>
-            <p>Maintenant il faut trouver les deux facteurs premiers p et q pour cela j'ai utilisé <span><a href="http://factordb.com/" target="_blank" style="text-decoration: none; color: #fb9904;">Factordb</a></span>.</p>
-            <p>En moins d'une seconde il nous trouve les deux facteurs premiers p et q, on peut ainsi calculer phi(n) puis d.</p>
-            <p>Enfin j'ai un fait un petit script python afin de déchiffrer le message et le tour est joué.</p>
+            <p>En partant du principe que vous êtes au point le chiffrement rsa, il me fallait :</p>
+            <ul>
+               <li>n : Module de chiffrement</li>
+               <li>e : Exposant de chiffrement</li>
+               <li>φ(n): Valeur de l'indicatrice d'Euler en n</li>
+               <li>d : Exposant de déchiffrement</li>
+            </ul>
+            <p>afin de retoruver le message en clair. Pour obtenir n on utilise openssl avec la commande :
+            <span style="color: #fb9904;">openssl rsa -pubin -in pubkey.pem -text -noout -modulus  </span>
+            Maintenant il faut trouver les deux facteurs premiers p et q pour cela j'ai utilisé <span><a href="http://factordb.com/" target="_blank" style="text-decoration: none; color: #fb9904;">Factordb</a></span>.
+            En moins d'une seconde il nous trouve les deux facteurs premiers p et q, on peut ainsi calculer phi(n) puis d.
+            Enfin j'ai un fait un petit script python afin de déchiffrer le message et le tour est joué.</p>
             <br>
             <br>
-      </div>
+      
       <div class="code">
       <pre><code class="py">
         from binascii import hexlify,unhexlify #convertir en hexadécimal ou l'inverse !
@@ -91,8 +103,9 @@ publickey.pem = "-----BEGIN PUBLIC KEY-----
             </div>
             <br>
             <br>
-            <p>And Voilà, c'était un challenge de niveau moyen pour moi j'ai notamement eu du mal à factoriser n car je ne connaissais pas Factordb, mais une fois p et q obtenu la résolution du challenge n'était pas compliqué.</p>
-            <p>ce qui était très intéressant.</p>
+            <p>And Voilà, c'était un challenge de niveau moyen pour moi j'ai notamement eu du mal à factoriser n car je ne connaissais pas Factordb, mais une fois les deux nombres premmiers p et q obtenu la résolution du challenge n'était pas compliquée,
+            ce qui m'a permis de mieux comprendre le chiffrement RSA.</p>
+         </div>
             <br>
             <br>
     </body>
