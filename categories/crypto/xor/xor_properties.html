@@ -9,7 +9,7 @@
       <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
       <script src="https://kit.fontawesome.com/a076d05399.js"></script>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Xor Properties</title>
+      <title>CryptoHack : Xor Properties</title>
    </head>
    <body>
       <nav>
@@ -42,10 +42,15 @@
             </li>
          </ul>
       </nav>
+
       <div class="container">
             <h1>CryptoHack : XOR Properties</h1>
-            <p>On se retrouve pour mon premier write-up d'un challenge assez facile venant de <span>CryptoHack</span>.</p>
-            <p>Le but était bienvidemment de retrouver le flag, on disposait des informations suivantes : </p>
+            <br>
+            <span> <i class="far fa-calendar" style="color: #fb9904;"></i> June 8, 201</span>
+            <br>
+            <span><i class="far fa-clock" style="color: #fb9904;"></i> 2 min read</span>
+            <p>On se retrouve pour mon premier write-up d'un challenge assez facile venant de <span> <a href="https://cryptohack.org/" target="_blank" style="text-decoration: none; color: #fb9904;">CryptoHack</a></span>
+             Le but était de retrouver le flag, on disposait des informations suivantes : </p>
             <div class="info">
                  <pre> <code class="py">KEY1 = "a6c8b6733c9b22de7bc0253266a3867df55acde8635e19c73313"
                     KEY2 ^ KEY1 = "37dcb292030faa90d07eec17e3b1c6d8daf94c35d4c9191a5e1e"
@@ -53,12 +58,12 @@ KEY2 ^ KEY3 = "c1545756687e7573db23aa1c3452a098b71a7fbf0fddddde5fc1"
 FLAG ^ KEY1 ^ KEY3 ^ KEY2 = "04ee9855208a2cd59091d04767ae47963170d1660df7f56f5faf"</pre></code>
             </div>
             <br>
+            <p>Maintenant grâce au propriétés du xor on peut facilement retrouver les clés 1 et 2 qui nous permettront
+               d'obtenir le flag. J'ai donc fait un petit script python et le tour est joué.
+            </p>
             <br>
-            <p>Maintenant grâce au propriétés du xor on peut facilement retrouver la clé 1 et la clé 2 qui nous permettra</p>
-            <p>d'obtenir le flag. J'ai donc fait un petit script python et le tour est joué. </p>
             <br>
-            <br>
-      </div>
+      
       <div class="code">
       <pre><code class="py">
         from pwn import xor
@@ -92,8 +97,9 @@ FLAG ^ KEY1 ^ KEY3 ^ KEY2 = "04ee9855208a2cd59091d04767ae47963170d1660df7f56f5fa
             </div>
             <br>
             <br>
-            <p>And Voilà, c'était un petit challenge sympathique, j'étais déjà informé sur le xor mais pas à propos de ses propriétés </p>
-            <p>ce qui était très intéressant.</p>
+            <p>And Voilà, c'était un petit challenge sympathique, j'étais déjà informé sur le xor mais pas à propos de ses propriétés
+            ce qui était très intéressant.</p>
+         </div>
             <br>
             <br>
     </body>
