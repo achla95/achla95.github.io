@@ -51,7 +51,7 @@
             <span><i class="far fa-clock" style="color: #fb9904;"></i> 2 min read</span>
             <br>
             <span style="color:  #FF851B;"><i class="fas fa-circle" style="color:   #FF851B  ;"></i> Medium</span>
-            <p>On se retrouve pour un write-up venant de <span><a href="https://www.root-me.org/" target="_blank" style="text-decoration: none; color: #fb9904;">Root-Me</a></span> cette fois çi.
+            <p>On se retrouve pour un write-up venant de <a href="https://www.root-me.org/" target="_blank" style="text-decoration: none; color: #fb9904;">Root-Me</a> cette fois çi.
             Le but était de retrouver le flag, on disposait des informations suivantes : </p>
             <div class="info">
     <pre><code class="py">cyphertext = "e8oQDihsmkvjT3sZe+EE8lwNvBEsFegYF6+OOFOiR6gMtMZxxba/bIgLUD8pV3yEf0gOOfHuB5bC3vQmo7bE4PcIKfpFGZBA"
@@ -63,17 +63,18 @@ publickey.pem = "-----BEGIN PUBLIC KEY-----
             </div>
             <br>
             <br>
-            <p>En partant du principe que vous êtes au point le chiffrement rsa, il me fallait :</p>
+            <p>Si vous n'êtes pas au point sur le chiffrement rsa je vous invite à lire le <a href="#" target="_blank" style="color:#FF851B; text-decoration: none;">"mini cours"</a> que j'ai fait dessus.
+               Afin de retoruver le message en clair, il me fallait :</p>
             <ul>
                <li>n : Module de chiffrement</li>
                <li>e : Exposant de chiffrement</li>
                <li>φ(n): Valeur de l'indicatrice d'Euler en n</li>
                <li>d : Exposant de déchiffrement</li>
             </ul>
-            <p>afin de retoruver le message en clair. Pour obtenir n on utilise openssl avec la commande :
-            <span style="color: #fb9904;">openssl rsa -pubin -in pubkey.pem -text -noout -modulus  </span>
-            Maintenant il faut trouver les deux facteurs premiers p et q pour cela j'ai utilisé <span><a href="http://factordb.com/" target="_blank" style="text-decoration: none; color: #fb9904;">Factordb</a></span>.
-            En moins d'une seconde il nous trouve les deux facteurs premiers p et q, on peut ainsi calculer phi(n) puis d.
+            <p>Pour obtenir le module de chiffrement on utilise openssl avec la commande :
+            <span style="color: #fb9904;">openssl rsa -pubin -in pubkey.pem -text -noout -modulus.</span>
+            Puis il faut trouver les deux facteurs premiers p et q pour cela j'ai utilisé <span><a href="http://factordb.com/" target="_blank" style="text-decoration: none; color: #fb9904;">Factordb</a></span>.
+            En moins d'une seconde il nous trouve les deux facteurs premiers p et q, on peut ainsi calculer phi(n) puis on en déduit notre clé privée d c'est à dire l'exposant de déchiffrement.
             Enfin j'ai un fait un petit script python afin de déchiffrer le message et le tour est joué.</p>
             <br>
             <br>
