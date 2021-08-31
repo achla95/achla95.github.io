@@ -157,15 +157,19 @@ nav ul ul ul li{
   span.cancel:before{
     content: '\f00d';
   }
+ 
 }
 .content{
-
-  z-index: -1;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
   text-align: center;
+}
+.content .desc{
+  font-size: 25px;
+  text-align:left;
+  font-family: sans-serif;
 }
 header{
   font-size: 35px;
@@ -175,4 +179,13 @@ header{
 p{
   font-size: 30px;
   font-weight: 500;
+}
+
+@media all and (max-width: 968px) {
+.content .desc{
+  font-size: 15px;
+}
+p{
+  font-size: 25px;
+}
 }
