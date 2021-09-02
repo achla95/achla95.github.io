@@ -214,42 +214,7 @@ transform: scale(1.5);
       display: none;
   }
 }
-.container{
-  margin: 0 auto;
-  padding:10px;
-  width: 760px;
-  
-}
-.container h1{
-  padding: 5px;
-  color: #fb9904;
-}
-.container p{
-  font-size: 20px;
-  padding: 15px;
-}
-.container ul{
-  list-style: none;
-  font-size: 20px;
-  padding: 15px;
-  font-family: 'Roboto', sans-serif;
-}
-@media all and (max-width: 767px) {
-  .container{
-    width: 500px;
-  }
-  .container h1{
-    font-size: 30px;
-  }
-  .container p{
-    font-size: 15px;
-  }
-}
-@media all and (max-width: 500px){
-  .container {
-    width: 350px;
-  }
-}
+
 .header{
   padding: 15px 26%;
   margin-top: 5vh;
