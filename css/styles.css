@@ -75,7 +75,7 @@ div.nav-bar {
 
 .nav-bar a:not(.img-a):hover {
     color: #0099e6;
-    transform: scale(1.3);
+    transform: scale(1.2);
 }
 
 .img-a {
