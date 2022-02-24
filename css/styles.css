@@ -45,7 +45,6 @@ div.nav-bar {
     -moz-box-shadow: -1px 6px 10px 2px rgba(131, 126, 126, 0.45);
     border-radius: 0px 0px 20px 20px;
 }
-
 .nav-bar img,
 .nav-bar-phone img {
     height: 100%;
@@ -75,7 +74,7 @@ div.nav-bar {
     transition: 0.5s;
 }
 
-.nav-bar a:not(.img-a):hover {
+.nav-bar a:not(.img-a,.back):hover {
     color:#F5F5F5;
     transform: scale(1.2);
 }
@@ -395,6 +394,17 @@ div.nav-bar {
     width: 18px;
     height: 18px;
     transform: translateY(22%);
+  }
+  article img{
+    width: 7%;
+    border-radius: 50%;
+    vertical-align: middle;
+    margin-left: 2%;
+    transition: all 0.5s;
+  }
+  article img:hover{
+    rotate: 30deg;
+    animation: transition;
   }
   
   article a{
