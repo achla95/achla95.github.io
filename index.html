@@ -4,35 +4,136 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="shortcut icon" href="images/logo.png" type="image/x-icon">
-    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
-    <title>Achla's Blog</title>
+    <link rel="stylesheet" href="./css/styles.css">
+    <title>Main Page</title>
 </head>
 <body>
-    <h1>Updating...</h1>
+    <div class="nav-bar">
+        <div class="logo">
+            <img src="./img/logo.png" alt="logoImg">
+        </div>
+        <ul class="nav-links">
+            <li>
+                <a href="#" target="_blank"><span style="color: #362F58; background-color: #fff; padding: 12px 16px;">Home</span></a>
+            </li>
+            <li>
+                <a href="#" target="_blank">Whoami</a>
+            </li>
+            <li>
+                <a href="/content/projects/index.html">Projects</a>
+            </li>
+            <li>
+                <input  class="search-input" type="text" placeholder="Search here">
+            </li>
+            <li>
+                <input type="checkbox" class="checkbox" id="chk" />
+                <label class="label" for="chk">
+                    <svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="12px" height="12px" viewBox="0 0 1049.000000 1280.000000" preserveAspectRatio="xMidYMid meet"> <g transform="translate(0.000000,1280.000000) scale(0.100000,-0.100000)" fill="#f1c40f" stroke="none"><path d="M6015 12789 c-740 -46 -1469 -219 -2145 -509 -284 -121 -817 -407 -985 -528 -22 -15 -108 -77 -191 -136 -179 -126 -366 -275 -521 -412 -163 -144 -375 -344 -398 -375 -11 -15 -63 -74 -115 -131 -1223 -1342 -1815 -3153 -1624 -4968 153 -1459 796 -2809 1835 -3849 665 -665 1429 -1156 2315 -1486 406 -151 865 -268 1304 -330 341 -48 510 -59 900 -59 374 -1 519 8 810 45 85 11 182 23 215 25 33 3 121 19 195 35 707 160 1097 293 1625 554 386 191 672 366 1000 612 261 196 285 223 237 271 -17 17 -43 20 -233 25 -1742 51 -3386 839 -4545 2177 -1184 1368 -1717 3206 -1453 5010 218 1494 969 2854 2124 3849 116 100 115 98 115 132 0 52 -22 59 -186 58 -82 -1 -207 -6 -279 -10z"/></g></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 48 48" style=" fill:#f39c12;"><path fill="#FF9800" d="M11 11H37V37H11z"></path><path fill="#FF9800" d="M11.272 11.272H36.728V36.728H11.272z" transform="rotate(-45.001 24 24)"></path><path fill="#FFEB3B" d="M13,24c0,6.077,4.923,11,11,11c6.076,0,11-4.923,11-11s-4.924-11-11-11C17.923,13,13,17.923,13,24"></path></svg>
+                    <div class="ball"></div>
+                </label>
+                
+            </li>
+        </ul>
+        <div class="burger">
+            <div class="row1"></div>
+            <div class="row2"></div>
+            <div class="row3"></div>
+        </div>
+    </div>
+    <div class="content">
+        <div class="blocks">
+            <div class="title">
+                <h2>
+                    <a href="./content/Cryptohack/Password_As_Keys/index.html">CryptoHack : Passwords as Keys</a>
+                </h2>
+                <span>#cryptohack #medium</span>
+            </div>
+            <div class="description">
+                <p>
+                    It is essential that keys in symmetric-key algorithms are random bytes, instead of passwords or other predictable data. The random bytes should be generated using a cryptographically-secure pseudorandom number generator (CSPRNG)... 
+                </p>
+            </div>
+        </div>
+        <div class="blocks">
+            <div class="title">
+                <h2>
+                    <a href="./content/hackthebox/htbPaper/index.html">HackTheBox : Paper</a>
+                </h2>
+                <span>#htb #pentest #easy</span>
+            </div>
+            <div class="description">
+                <p>
+                    Exploitation d'une path traversal attack qui nous permet de lire un certain fichier contenant le mot de passe d'un utilisateur, on pourra ainsi se connecter en ssh. Pour le root, il suffit d'utiliser une cve plutôt récente et populaire.
+                </p>
+            </div>
+        </div>
+        <div class="blocks">
+            <div class="title">
+                <h2>
+                    <a href="./content/hackthebox/htbMeta/index.html">HackTheBox : Meta</a>
+                </h2>
+                <span>#htb #pentest #medium</span>
+            </div>
+            <div class="description">
+                <p>
+                    Utilisation d'une faille d'un outil sur un site web, qui nous permet d'avoir un shell en tant que www-data. Puis, grâce à une mauvaise configuration, nous pouvons lire le fichier contenant la clé privée ssh. Pour le root, il suffit d'utiliser les droits qu'on a pour avoir un shell en tant que root.
+                </p>
+            </div>
+        </div>
+        <div class="blocks">
+            <div class="title">
+                <h2>
+                    <a href="./content/hackthebox/htbHorizontall/index.html">HackTheBox : Horizontall</a>
+                </h2>
+                <span>#htb #pentest #easy</span>
+            </div>
+            <div class="description">
+                <p>
+                    Nous solvons Horizontall une machine easy sur HackTheBox. Dans cette machine nous exploiterons une faille sur strapi afin d'avoir un reverse shell puis nous ferons du ssh port forwading et exploiterons une faille laravel afin de lire le flag root.
+                </p>
+            </div>
+        </div>
+        <div class="blocks">
+            <div class="title">
+                <h2>
+                    <a href="./content/hackthebox/htbSeal/index.html">HackTheBox : Seal</a>
+                </h2>
+                <span>#htb #pentest #medium</span>
+            </div>
+            <div class="description">
+                <p>
+                    Petite vidéo sans voix dans laquel je solve la machine.
+                </p>
+            </div>
+        </div>
+        <div class="blocks">
+            <div class="title">
+                <h2>
+                    <a href="./content/hackthebox/htbPrevise/index.html">HackTheBox : Previse</a>
+                </h2>
+                <span>#htb #pentest #easy</span>
+            </div>
+            <div class="description">
+                <p>
+                    Petite vidéo sans voix dans laquel je solve la machine.
+                </p>
+            </div>
+        </div>
+        <div class="blocks">
+            <div class="title">
+                <h2>
+                    <a href="./content/hackthebox/htbBountyHunter/index.html">HackTheBox : BountyHunter</a>
+                </h2>
+                <span>#htb #pentest #easy</span>
+            </div>
+            <div class="description">
+                <p>
+                    Attaque d’entité externe XML, l'obtention d'un mot de passe de la base de donnée, et enfin l’exploitation d’un simple script python qui nous permet de lire le flag root.
+                </p>
+            </div>
+        </div>
+    </div>
+<script src="/js/app.js" type="text/javascript"></script>
 </body>
-<script>
-    var burger = document.querySelector('.burger');
-    var navbar = document.querySelector('.nav-bar-phone nav');
-    used = false;
-
-    burger.addEventListener('click', function () {
-        if (used) {
-        navbar.classList.toggle('on');
-        $('*:not(.nav-bar-phone, .nav-bar-phone *, body, html)').show();
-        $('.nav-bar').hide();
-        $('head *').hide();
-        $('body').css("background", "#ecf0f1");
-        used = false;
-        console.log(used);
-  } else {
-    navbar.classList.toggle('on');
-    $('*:not(.nav-bar-phone, .nav-bar-phone *, body, html)').hide();
-    $('body').css("background", "#fff");
-    used = true;
-    console.log(used);
-  }
-});
-    </script>
 </html>
