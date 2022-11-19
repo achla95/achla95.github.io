@@ -2,6 +2,10 @@
 title: "HackTheBox Forest"
 date: 2022-11-11T19:09:00+01:00
 draft: false 
+tags: [
+    "HackTheBox",
+    "Pentest",
+]
 ---
 
 Exploit a domain controller that allows us to enumerate users over RPC, attack Kerberos 

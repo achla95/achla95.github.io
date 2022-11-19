@@ -2,6 +2,10 @@
 title: "HacktheBox BountyHunter"
 date: 2022-02-27T16:52:21+01:00
 draft: false
+tags: [
+    "HackTheBox",
+    "Pentest",
+]
 ---
 
 External XML entity attack, obtaining a password from the database, and finally exploiting a simple python script that allows us to read the root flag.
