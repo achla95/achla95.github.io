@@ -1,7 +1,7 @@
 ---
 title: "HackTheBox MetaTwo"
 date: 2022-11-19T12:36:39+01:00
-draft: true
+draft: false
 tags: [
     "HackTheBox",
     "Pentest",
