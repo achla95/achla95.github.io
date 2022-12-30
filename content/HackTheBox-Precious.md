@@ -56,7 +56,7 @@ send the request to repeter and catch the response :
 
 ![image text](/second_capture_burpsuite.png)
 
-We see and bunch of informations looking at the end an interesting info
+We see and bunch of information looking at the end an interesting info
 alerts me : 
 ![image text](/third_capture_burpsuite.png)
 
