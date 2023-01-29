@@ -1,5 +1,5 @@
 ---
-title: "Hackthebox Investigation"
+title: \"Hackthebox Investigation\"
 date: 2023-01-25T14:44:57+01:00
 draft: true
 ---
@@ -9,7 +9,7 @@ Next we get credentials for one user from a mail text message. Finally, for root
 of binary exploitation using ghidra.
 <!--more-->
 
-## Nmap
+## **Nmap**
 
 As usual we start we some recon :
 
@@ -21,7 +21,7 @@ PORT    STATE SERVICE
 80/tcp  open  http
 ```
 
-## HTTP:80
+## **HTTP:80**
 
 ![image text](/investigation_htb_web.png)
 
@@ -62,4 +62,46 @@ Connection received on 10.129.139.235
 www-data@investigation:~/uploads/1674415004$ id
 uid=33(www-data) gid=33(www-data) groups=33(www-data)
 ```
+## **Shell as smorton**
+
+There is a Windows Event Logs message file owned by smorton in `usr/local/investigation`.
+Transfer the mail on our machine and open it with outlook : 
+
+![image text](/mail_investigation.png)
+
+We can see that there is a zip file in attachment. After unziping it, I got an EVTX file, a Windows XML EventLog file.
+To analyze the file I choose : **[EVTX](https://github.com/omerbenamram/evtx)**.
+
+```bash
+┌──(kali㉿kali)-[~/Documents/htb/box/investigation]
+└─$ ./evtx_dump-v0.8.0-x86_64-unknown-linux-gnu -f output_evtx -o json security.evtx
+```
+The output contains a lot of rows so lets filter it : 
+
+```bash
+┌──(kali㉿kali)-[~/Documents/htb/box/investigation]
+└─$ grep TargetUserName evtx_ouput | sort -u > sorted.txt
+                                                                                                                                                                                                                  
+┌──(kali㉿kali)-[~/Documents/htb/box/investigation]
+└─$ head -n 11 sorted.txt                                
+      \"TargetUserName\": \"-\",
+      \"TargetUserName\": \"aanderson\",
+      \"TargetUserName\": \"AAnderson\"
+      \"TargetUserName\": \"AAnderson\",
+      \"TargetUserName\": \"Administrator\"
+      \"TargetUserName\": \"Administrators\"
+      \"TargetUserName\": \"AWright\"
+      \"TargetUserName\": \"Backup Operators\"
+      \"TargetUserName\": \"BMay\"
+      \"TargetUserName\": \"DefaultAccount\"
+      \"TargetUserName\": \"Def@ultf0r3nz!csPa$$\",
+```
+I noticed `Def@ultf0r3nz!csPa$$` it seems like a password so let's try it to ssh to smorton user : 
+
+![image text](/ssh_investigation.png)
+
+And it works, let's switch to the root part now
+
+## **Shell as root**
+
 
